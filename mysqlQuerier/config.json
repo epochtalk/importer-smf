@@ -1,0 +1,7 @@
+{
+  "host" : "localhost",
+  "user" :  "lolipop",
+  "password" :  "",
+  "database" : "lolipop_test",
+  "connectionLimit" : 100
+}
