@@ -27,10 +27,8 @@ MysqlQuerier.prototype.getColumns = function (err, table, callback) {
     return callback(err);
   }
 
-  this.pool.query('SHOW columns FROM ' + mysql.escapeId(table), function (err, rows) {
-    if (callback && typeof(callback) === "function") {
-      return callback(null, rows);
-    }
+  this.pool.query('SHOW columns FROM ??', table, function (err, rows) {
+    return callback(null, rows);
   });
 }
 
@@ -39,23 +37,21 @@ MysqlQuerier.prototype.getRowsWhere = function (err, table, obj, callback) {
     return callback(err);
   }
 
-  this.pool.query('SELECT * FROM ' + mysql.escapeId(table) + ' WHERE ' + mysql.escape(obj), function (err, rows) {
-    if (callback && typeof(callback) === "function") {
-      return callback(null, rows);
-    }
+  this.pool.query('SELECT * FROM ?? WHERE ?', [table, obj], function (err, rows) {
+    return callback(null, rows);
   });
 }
 
 MysqlQuerier.prototype.createRowStream = function (err, table) {
-  return this.pool.query('SELECT * FROM ' + mysql.escapeId(table)).stream();
+  return this.pool.query('SELECT * FROM ??', table).stream();
 }
 
 MysqlQuerier.prototype.createRowStreamWhere = function (err, table, obj) {
-  return this.pool.query('SELECT * FROM ' + mysql.escapeId(table) + ' WHERE ' + mysql.escape(obj)).stream();
+  return this.pool.query('SELECT * FROM ?? WHERE ?', [table,obj]).stream();
 }
 
 MysqlQuerier.prototype.end = function (callback) {
-  if (callback && typeof(callback) === "function") {
+  if (callback && prototypeof(callback) === "function") {
     this.pool.end(callback());
   }
   else {

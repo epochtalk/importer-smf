@@ -9,7 +9,7 @@ var tests = {
   getTables: function (callback) {
            mQ.getTables(null, function (err, tables) {
              if (err) {
-               throw err;
+               console.log(err);
              }
 
              console.log('testGetTables:\n'+tables);
@@ -19,7 +19,7 @@ var tests = {
   getColumns: function (callback) {
             mQ.getColumns(null, 'test_table', function (err, columns) {
               if (err) {
-                throw err;
+                console.log(err);
               }
 
               console.log('testGetColumns:');
@@ -27,6 +27,18 @@ var tests = {
               callback();
             });
           },
+  getRowsWhere: function (callback) {
+                  var rowsWhere = mQ.getRowsWhere(null, 'test_table', { percent: 10 },
+                      function (err, rows) {
+                        if (err) {
+                          console.log(err);
+                        }
+
+                        console.log('testGetRowsWhere:');
+                        console.log(rows);
+                        callback();
+                      });
+                },
   rowStream: function (callback) {
            var rowStream = mQ.createRowStream(null, 'test_table');
            var rowStreamT2 = through2.obj(function (row, enc, cb) {
