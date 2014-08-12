@@ -30,11 +30,8 @@ module.exports = function smfImporter(debug, topCallback) {
     var boardStream = ebs.createBoardStream(null);
 
     boardStream.pipe(through2.obj(function (boardObject, enc, trBoardCb) {
-      core.boards.import(boardObject, function (err, newBoard) {
-        if (err) {
-          console.log(err);
-        }
-
+      core.boards.import(boardObject)
+      .then(function (newBoard) {
         trBoardCb();  // Don't return.  Async will handle end.
 
         asyncQueue.push(function (asyncThreadCb) {
@@ -48,11 +45,8 @@ module.exports = function smfImporter(debug, topCallback) {
           var threadStream = ets.createThreadStream(null, oldBoardId, newBoardId);
 
           threadStream.pipe(through2.obj(function (threadObject, enc, trThreadCb) {
-            core.threads.import(threadObject, function (err, newThread) {
-              if (err) {
-                console.log(err);
-              }
-
+            core.threads.import(threadObject)
+            .then(function (newThread) {
               trThreadCb();  // Don't return.  Async will handle end.
 
               asyncQueue.push(function (asyncPostCb) {
@@ -71,24 +65,30 @@ module.exports = function smfImporter(debug, topCallback) {
                     return trPostCb();  // Don't return.  Async will handle end.
                   }
                   else {
-                    core.posts.import(postObject, function (err, newPost) {
-                      if (err) {
-                        console.log(err);
-                      }
+                    core.posts.import(postObject)
+                  .then(function (newPost) {
+                    trPostCb();  // Don't return.  Async will handle end. 
 
-                      trPostCb();  // Don't return.  Async will handle end.
-
-                      if (debug) {
-                        console.log('postId: '+newPost.smf.post_id);
-                      }
-                    });
+                    if (debug) {
+                      console.log('postId: '+newPost.smf.post_id);
+                    }
+                  })
+                .catch(function(err) {
+                  console.log(err);
+                });
                   }
                 }, asyncPostCb));  // When stream is empty, worker is done
               });
-            });
+            })
+          .catch(function(err) { // Catch core.threads.import
+            console.log(err);
+          });
           }, asyncThreadCb));  // When stream is empty, worker is done
         });
-      });
+      })
+    .catch(function(err) {
+      console.log(err);
+    });
     }, asyncBoardCb));  // When stream is empty, worker is done
   });
 }
