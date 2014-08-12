@@ -1,11 +1,12 @@
 module.exports = function smfImporter(debug, topCallback) {
+  var path = require('path');
   var through2 = require('through2');
-  var epochBoardStream = require(__dirname + '/smfToEpochStream/epochBoardStream');
-  var epochThreadStream = require(__dirname + '/smfToEpochStream/epochThreadStream');
-  var epochPostStream = require(__dirname + '/smfToEpochStream/epochPostStream');
+  var epochBoardStream = require(path.join(__dirname, 'epoch_stream', 'board-stream'));
+  var epochThreadStream = require(path.join(__dirname, 'epoch_stream', 'thread-stream'));
+  var epochPostStream = require(path.join(__dirname, 'epoch_stream', 'post-stream'));
   var core = require('epochcore');
-  var mysqlQuerier = require(__dirname + '/mysqlQuerier/mysqlQuerier');
-  var mQConfig = require(__dirname + '/config.json');
+  var mysqlQuerier = require(path.join(__dirname, 'mysql_querier', 'mysql-querier'));
+  var mQConfig = require(path.join(__dirname, 'config.json'));
   var mQ = mysqlQuerier(mQConfig);
 
   var async = require('async');

@@ -1,5 +1,6 @@
-var mysqlQuerier = require('./mysqlQuerier');
-var config = require('./config.json');
+var path = require('path');
+var mysqlQuerier = require(path.join(__dirname, 'mysql-querier'));
+var config = require(path.join(__dirname, 'config.json'));
 var mQ = mysqlQuerier(config);
 var async = require('async');
 var through2 = require('through2');

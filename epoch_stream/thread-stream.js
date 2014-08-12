@@ -1,4 +1,5 @@
-var epochMap = require(__dirname + '/epochMap');
+var path = require('path');
+var epochMap = require(path.join(__dirname, 'epoch-map'));
 var through2 = require('through2');
 
 var EpochThreadStream = module.exports = function EpochThreadStream(mQ) {

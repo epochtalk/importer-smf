@@ -1,4 +1,4 @@
-lolipop
+mysql-querier
 =======
 
 A utility to make calls to mysql through nodejs (somewhat) more modular.
@@ -15,7 +15,7 @@ Implementation is with pools, so you can also use node-mysql [pooling
 options](https://github.com/felixge/node-mysql#pool-options).
 
 To make full use of the connectionLimit option, have your queries share a
-lolipop instance.
+mysql-querier instance.
 
 <h3>config.json</h3>
 ~~~~
@@ -33,8 +33,8 @@ Instantiation
 
 ~~~~
 var config = require('./config.json');
-var lolipop = require('./lolipop');
-var lp = lolipop(config);
+var mysql-querier = require('./mysql-querier');
+var lp = mysql-querier(config);
 ~~~~
 
 
@@ -58,8 +58,8 @@ Get tables
 
 ~~~~
 var config = require('./config.json');
-var lolipop = require('./lolipop');
-var lp = lolipop(config);
+var mysql-querier = require('./mysql-querier');
+var lp = mysql-querier(config);
 
 lp.getTables(err, callback(err, tables));
 ~~~~
@@ -69,8 +69,8 @@ Get columns
 
 ~~~~
 var config = require('./config.json');
-var lolipop = require('./lolipop');
-var lp = lolipop(config);
+var mysql-querier = require('./mysql-querier');
+var lp = mysql-querier(config);
 
 // table is a String, the name of the table
 // the input is escaped
@@ -102,6 +102,6 @@ Streaming rows with WHERE
 
 var obj = { field : value };
 
-var rowStreamWhere = lolipop.createRowStreamWhere(err, table, obj);
+var rowStreamWhere = mysql-querier.createRowStreamWhere(err, table, obj);
 // SELECT * FROM 'table' WHERE 'field' = value;
 ~~~~
