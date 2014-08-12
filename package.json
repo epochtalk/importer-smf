@@ -1,6 +1,7 @@
 {
   "name": "smfImporter",
   "version": "0.0.0",
+  "main": "./smfImporter.js",
   "repository": {
     "type": "git"
   },
