@@ -6,8 +6,8 @@ var async = require('async');
 var through2 = require('through2');
 
 var tests = {
-  getTables: function (callback) {
-           mQ.getTables(function (err, tables) {
+  getTables: function(callback) {
+           mQ.getTables(function(err, tables) {
              if (err) {
                console.log(err);
              }
@@ -16,8 +16,8 @@ var tests = {
              callback();
            });
          },
-  getColumns: function (callback) {
-            mQ.getColumns('test_table', function (err, columns) {
+  getColumns: function(callback) {
+            mQ.getColumns('test_table', function(err, columns) {
               if (err) {
                 console.log(err);
               }
@@ -27,9 +27,9 @@ var tests = {
               callback();
             });
           },
-  getRowsWhere: function (callback) {
+  getRowsWhere: function(callback) {
                   var rowsWhere = mQ.getRowsWhere('test_table', { percent: 10 },
-                      function (err, rows) {
+                      function(err, rows) {
                         if (err) {
                           console.log(err);
                         }
@@ -39,34 +39,34 @@ var tests = {
                         callback();
                       });
                 },
-  rowStream: function (callback) {
+  rowStream: function(callback) {
            var rowStream = mQ.createRowStream('test_table');
-           var rowStreamT2 = through2.obj(function (row, enc, cb) {
+           var rowStreamT2 = through2.obj(function(row, enc, cb) {
              console.log('testRowStream: ');
              console.log(row.percent);
              cb();
            },
-           function () {
+           function() {
              callback();
            });
            rowStream.pipe(rowStreamT2);
          },
 
-  rowStreamWhere: function (callback) {
+  rowStreamWhere: function(callback) {
             var rowStreamWhere = mQ.createRowStreamWhere('test_table', { percent: 10 });
-            var rowStreamWhereT2 = through2.obj(function (row, enc, cb) {
+            var rowStreamWhereT2 = through2.obj(function(row, enc, cb) {
               console.log('testRowStreamWhere: ' + row.percent);
               cb();
             },
-            function () {
+            function() {
               callback();
             });
             rowStreamWhere.pipe(rowStreamWhereT2);
           }
 }
 
-async.parallel(tests, function (err, results) {
-  mQ.end(function () {
+async.parallel(tests, function(err, results) {
+  mQ.end(function() {
     console.log('done');
   });
 });
