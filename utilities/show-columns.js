@@ -1,7 +1,7 @@
 var path = require('path');
 var mysqlQuerier = require(path.join(__dirname, '..', 'mysql_querier', 'mysql-querier'));
-var config = require(path.join(__dirname, '..', 'config.json'));
-mQ = mysqlQuerier(config);
+var mQConfig = require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
+var mQ = mysqlQuerier(mQConfig);
 
 mQ.getColumns(process.argv[2], function (err, columns) {
   if (err) {

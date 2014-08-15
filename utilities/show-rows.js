@@ -1,7 +1,7 @@
 var path = require('path');
 var mysqlQuerier = require(path.join(__dirname, '..', 'mysql_querier', 'mysql-querier'));
-var config = require(path.join(__dirname, '..', 'config.json'));
-var mQ = mysqlQuerier(config);
+var mQConfig = require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
+var mQ = mysqlQuerier(mQConfig);
 var through2 = require('through2');
 
 rowStream = mQ.createRowStream(process.argv[2]);

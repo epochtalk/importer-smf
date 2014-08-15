@@ -6,7 +6,7 @@ module.exports = function smfImporter(debug, topCallback) {
   var epochPostStream = require(path.join(__dirname, 'epoch_stream', 'post-stream'));
   var core = require('epochcore')();
   var mysqlQuerier = require(path.join(__dirname, 'mysql_querier', 'mysql-querier'));
-  var mQConfig = require(path.join(__dirname, 'config.json'));
+  var mQConfig = require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
   var mQ = mysqlQuerier(mQConfig);
 
   var async = require('async');
