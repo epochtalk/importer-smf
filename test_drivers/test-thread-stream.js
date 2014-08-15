@@ -1,7 +1,7 @@
 var path = require('path');
 var through2 = require('through2');
 var epochThreadStream = require(path.join(__dirname, '..', 'epoch_stream', 'thread-stream'));
-var mysqlQuerier = require(path.join(__dirname, '..', 'mysql_querier', 'mysql-querier'));
+var mysqlQuerier = require(path.join(__dirname, '..', 'mysql_querier'));
 var mQConfig = require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
 var mQ = mysqlQuerier(mQConfig);
 
