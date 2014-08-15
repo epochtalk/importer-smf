@@ -1,4 +1,4 @@
-exports.remapObject = function (oldObject, map) {
+exports.remapObject = function(oldObject, map) {
   var obj = {};
   for (oldKey in map) {
     var newKey = map[oldKey];
