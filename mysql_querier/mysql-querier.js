@@ -34,7 +34,7 @@ var MysqlQuerier = {
                           return pool.query('SELECT * FROM ?? WHERE ?', [table,obj]).stream();
                         },
   end: function (callback) {
-         if (callback && prototypeof(callback) === "function") {
+         if (callback && typeof(callback) === "function") {
            pool.end(callback());
          }
          else {

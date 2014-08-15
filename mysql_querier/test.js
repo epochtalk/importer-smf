@@ -66,5 +66,7 @@ var tests = {
 }
 
 async.parallel(tests, function (err, results) {
-  mQ.end();
+  mQ.end(function () {
+    console.log('done');
+  });
 });
