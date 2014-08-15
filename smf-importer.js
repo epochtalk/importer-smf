@@ -10,12 +10,12 @@ module.exports = function smfImporter(debug, topCallback) {
   var async = require('async');
   var concurrency = Number.MAX_VALUE; // Concurrency handled by lolipop
 
-  var asyncQueue = async.queue(function (runTask, callback) {
+  var asyncQueue = async.queue(function(runTask, callback) {
     runTask(callback);
   }, concurrency);
 
-  asyncQueue.drain = function () {
-    mQ.end(function () {
+  asyncQueue.drain = function() {
+    mQ.end(function() {
       if (debug) {
         console.log('Import complete.');
       }
@@ -23,16 +23,16 @@ module.exports = function smfImporter(debug, topCallback) {
     });
   }
 
-  asyncQueue.push(function (asyncBoardCb) {
+  asyncQueue.push(function(asyncBoardCb) {
 
     var boardStream = epochStream.createBoardStream(mQ);
 
-    boardStream.pipe(through2.obj(function (boardObject, enc, trBoardCb) {
+    boardStream.pipe(through2.obj(function(boardObject, enc, trBoardCb) {
       core.boards.import(boardObject)
-      .then(function (newBoard) {
+      .then(function(newBoard) {
         trBoardCb();  // Don't return.  Async will handle end.
 
-        asyncQueue.push(function (asyncThreadCb) {
+        asyncQueue.push(function(asyncThreadCb) {
 
           var oldBoardId = newBoard.smf.board_id;
           if (debug) {
@@ -41,12 +41,12 @@ module.exports = function smfImporter(debug, topCallback) {
           var newBoardId = newBoard.id;
           var threadStream = epochStream.createThreadStream(mQ, oldBoardId, newBoardId);
 
-          threadStream.pipe(through2.obj(function (threadObject, enc, trThreadCb) {
+          threadStream.pipe(through2.obj(function(threadObject, enc, trThreadCb) {
             core.threads.import(threadObject)
-            .then(function (newThread) {
+            .then(function(newThread) {
               trThreadCb();  // Don't return.  Async will handle end.
 
-              asyncQueue.push(function (asyncPostCb) {
+              asyncQueue.push(function(asyncPostCb) {
 
                 var oldThreadId = newThread.smf.thread_id;
                 if (debug) {
@@ -56,13 +56,13 @@ module.exports = function smfImporter(debug, topCallback) {
                 var firstPostId = newThread.smf.post_id;
                 var postStream = epochStream.createPostStream(mQ, oldThreadId, newThreadId);
 
-                postStream.pipe(through2.obj(function (postObject, enc, trPostCb) {
+                postStream.pipe(through2.obj(function(postObject, enc, trPostCb) {
                   if (postObject.smf.post_id === firstPostId) {
                     return trPostCb();  // Don't return.  Async will handle end.
                   }
                   else {
                     core.posts.import(postObject)
-                  .then(function (newPost) {
+                  .then(function(newPost) {
                     trPostCb();  // Don't return.  Async will handle end. 
 
                     if (debug) {
