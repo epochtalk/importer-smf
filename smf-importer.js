@@ -1,9 +1,7 @@
 module.exports = function smfImporter(debug, topCallback) {
   var path = require('path');
   var through2 = require('through2');
-  var epochBoardStream = require(path.join(__dirname, 'epoch_stream', 'board-stream'));
-  var epochThreadStream = require(path.join(__dirname, 'epoch_stream', 'thread-stream'));
-  var epochPostStream = require(path.join(__dirname, 'epoch_stream', 'post-stream'));
+  var epochStream = require(path.join(__dirname, 'epoch_stream'));
   var core = require('epochcore')();
   var mysqlQuerier = require(path.join(__dirname, 'mysql_querier'));
   var mQConfig = require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
@@ -27,8 +25,7 @@ module.exports = function smfImporter(debug, topCallback) {
 
   asyncQueue.push(function (asyncBoardCb) {
 
-    var ebs = epochBoardStream(mQ);
-    var boardStream = ebs.createBoardStream(null);
+    var boardStream = epochStream.createBoardStream(mQ);
 
     boardStream.pipe(through2.obj(function (boardObject, enc, trBoardCb) {
       core.boards.import(boardObject)
@@ -42,8 +39,7 @@ module.exports = function smfImporter(debug, topCallback) {
             console.log('boardId: '+oldBoardId);
           }
           var newBoardId = newBoard.id;
-          var ets = epochThreadStream(mQ);
-          var threadStream = ets.createThreadStream(null, oldBoardId, newBoardId);
+          var threadStream = epochStream.createThreadStream(mQ, oldBoardId, newBoardId);
 
           threadStream.pipe(through2.obj(function (threadObject, enc, trThreadCb) {
             core.threads.import(threadObject)
@@ -58,8 +54,7 @@ module.exports = function smfImporter(debug, topCallback) {
                 }
                 var newThreadId = newThread.thread_id;
                 var firstPostId = newThread.smf.post_id;
-                var eps = epochPostStream(mQ);
-                var postStream = eps.createPostStream(null, oldThreadId, newThreadId);
+                var postStream = epochStream.createPostStream(mQ, oldThreadId, newThreadId);
 
                 postStream.pipe(through2.obj(function (postObject, enc, trPostCb) {
                   if (postObject.smf.post_id === firstPostId) {
