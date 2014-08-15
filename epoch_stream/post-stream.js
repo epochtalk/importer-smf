@@ -2,14 +2,7 @@ var path = require('path');
 var epochMap = require(path.join(__dirname, 'epoch-map'));
 var through2 = require('through2');
 
-var EpochPostStream = module.exports = function EpochPostStream(mQ) {
-  if (!(this instanceof EpochPostStream)) {
-    return new EpochPostStream(mQ);
-  }
-  this.mQ = mQ;
-}
-
-EpochPostStream.prototype.createPostStream = function (err, oldThreadId, newThreadId) {
+module.exports = function(mQ, oldThreadId, newThreadId) {
   var table = 'smf_messages';
   var tableMap = {
     subject : 'title',
@@ -21,8 +14,8 @@ EpochPostStream.prototype.createPostStream = function (err, oldThreadId, newThre
     ID_MSG : 'post_id'
   }
 
-  var rowStreamWhere = this.mQ.createRowStreamWhere(null, table, { ID_TOPIC : oldThreadId});
-  var tr = through2.obj(function (row, enc, cb) {
+  var rowStreamWhere = mQ.createRowStreamWhere(table, { ID_TOPIC : oldThreadId});
+  var tr = through2.obj(function(row, enc, cb) {
     var obj = epochMap.remapObject(row, tableMap);
     // Handling for created_at
     obj['created_at'] = row.posterTime;

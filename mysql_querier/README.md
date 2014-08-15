@@ -34,7 +34,7 @@ Instantiation
 ~~~~
 var config = require('./config.json');
 var mysql-querier = require('./mysql-querier');
-var lp = mysql-querier(config);
+var mQ = mysql-querier(config);
 ~~~~
 
 
@@ -49,7 +49,7 @@ Closing
 You should always close the connection using:
 ~~~~
 ...
-lp.end();
+mQ.end();
 ~~~~
 
 
@@ -59,9 +59,9 @@ Get tables
 ~~~~
 var config = require('./config.json');
 var mysql-querier = require('./mysql-querier');
-var lp = mysql-querier(config);
+var mQ = mysql-querier(config);
 
-lp.getTables(err, callback(err, tables));
+mQ.getTables(err, callback(err, tables));
 ~~~~
 
 Get columns
@@ -70,11 +70,11 @@ Get columns
 ~~~~
 var config = require('./config.json');
 var mysql-querier = require('./mysql-querier');
-var lp = mysql-querier(config);
+var mQ = mysql-querier(config);
 
 // table is a String, the name of the table
 // the input is escaped
-lp.getColumns(err, table, callback(err, tables));
+mQ.getColumns(err, table, callback(err, tables));
 ~~~~
 
 Streaming rows
@@ -85,7 +85,7 @@ Streaming rows
 
 // table is a String, the name of the table
 // the input is escaped
-var rowStream = lp.createRowStream(err, table);
+var rowStream = mQ.createRowStream(err, table);
 rowStream.on('error', function {
   // do something with error
 })

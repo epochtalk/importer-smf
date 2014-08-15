@@ -1,60 +1,44 @@
 var mysql = require('mysql');
+var pool = null;
 
-var MysqlQuerier = module.exports = function MysqlQuerier(config) {
-  if (!(this instanceof MysqlQuerier)) {
-    return new MysqlQuerier(config);
-  }
-  this.pool = mysql.createPool(config);
+module.exports = function(config) {
+  pool = mysql.createPool(config);
+  return MysqlQuerier;
 }
 
-MysqlQuerier.prototype.getTables = function (err, callback) {
-  if (err) {
-    return callback(err);
-  }
+var MysqlQuerier = {
+  getTables: function(callback) {
+    var tables = [];
 
-  var tables = [];
-
-  this.pool.query('SHOW tables', function (err, rows) {
-    rows.forEach(function (row) {
-      tables.push(row[Object.keys(row)[0]]);
+    pool.query('SHOW tables', function(err, rows) {
+      rows.forEach(function(row) {
+        tables.push(row[Object.keys(row)[0]]);
+      });
+      return callback(err, tables);
     });
-    return callback(null, tables);
-  });
-}
-
-MysqlQuerier.prototype.getColumns = function (err, table, callback) {
-  if (err) {
-    return callback(err);
-  }
-
-  this.pool.query('SHOW columns FROM ??', table, function (err, rows) {
-    return callback(null, rows);
-  });
-}
-
-MysqlQuerier.prototype.getRowsWhere = function (err, table, obj, callback) {
-  if (err) {
-    return callback(err);
-  }
-
-  this.pool.query('SELECT * FROM ?? WHERE ?', [table, obj], function (err, rows) {
-    return callback(null, rows);
-  });
-}
-
-MysqlQuerier.prototype.createRowStream = function (err, table) {
-  return this.pool.query('SELECT * FROM ??', table).stream();
-}
-
-MysqlQuerier.prototype.createRowStreamWhere = function (err, table, obj) {
-  return this.pool.query('SELECT * FROM ?? WHERE ?', [table,obj]).stream();
-}
-
-MysqlQuerier.prototype.end = function (callback) {
-  if (callback && prototypeof(callback) === "function") {
-    this.pool.end(callback());
-  }
-  else {
-    this.pool.end();
+  },
+  getColumns: function(table, callback) {
+    pool.query('SHOW columns FROM ??', table, function(err, rows) {
+      return callback(err, rows);
+    });
+  },
+  getRowsWhere: function(table, obj, callback) {
+    pool.query('SELECT * FROM ?? WHERE ?', [table, obj], function(err, rows) {
+      return callback(err, rows);
+    });
+  },
+  createRowStream: function(table) {
+    return pool.query('SELECT * FROM ??', table).stream();
+  },
+  createRowStreamWhere: function(table, obj) {
+    return pool.query('SELECT * FROM ?? WHERE ?', [table,obj]).stream();
+  },
+  end: function(callback) {
+    if (callback && typeof(callback) === "function") {
+      pool.end(callback());
+    }
+    else {
+      pool.end();
+    }
   }
 }

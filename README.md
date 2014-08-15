@@ -36,25 +36,25 @@ Show tables
 -----------
 
 ~~~~
-node utilities/showTables
+node utilities/show-tables
 ~~~~
 OR
 ~~~~
-node utilities/showTables dbname
+node utilities/show-tables dbname
 ~~~~
 
 Show columns
 ------------
 
 ~~~~
-node utilities/showColumns tablename
+node utilities/show-columns tablename
 ~~~~
 
 Show rows
 ---------
 
 ~~~~
-node utilities/showRows tablename
+node utilities/show-rows tablename
 ~~~~
 
 
@@ -62,16 +62,16 @@ Stream rows to level
 --------------------
 
 This cannot be done generically.  Table-streaming implementation examples are
-available in files:  [epochPostStream](./epochPostStream.js),
-[epochThreadStream](./epochThreadStream.js), and
-[epochBoardStream](./epochBoardStream.js). 
+available in files:  [post-stream](./epoch_stream/post-stream.js),
+[thread-stream](./epoch_stream/thread-stream.js), and
+[board-stream](./epoch_stream/board-stream.js). 
 
-These implementations are combined in [epochImporter](./epochImporter.js), where
+These implementations are combined in [smf-importer](./smf-importer.js), where
 a waterfall/hierarchical approach is taken to stream Boards, Threads from each
 board, and Posts from each thread by setting appropriate fields by newId via
 callback function of the importer method used.
 
 To test these implementations, drivers have been created:
-[testEpochBoardStream](./testDrivers/testEpochBoardStream.js),
-[testEpochThreadStream](./testDrivers/testEpochThreadStream.js),
-and [testEpochPostStream](./testDrivers/testEpochPostStream.js).
+[test-board-stream](./test_drivers/test-board-stream.js),
+[test-thread-stream](./test_drivers/test-thread-stream.js),
+and [test-post-stream](./test_drivers/test-post-stream.js).
