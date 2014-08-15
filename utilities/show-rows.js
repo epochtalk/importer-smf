@@ -5,10 +5,10 @@ var mQ = mysqlQuerier(mQConfig);
 var through2 = require('through2');
 
 rowStream = mQ.createRowStream(process.argv[2]);
-rowStream.pipe(through2.obj(function (row, enc, cb) {
+rowStream.pipe(through2.obj(function(row, enc, cb) {
   console.log(row);
   cb();
 },
-function () {
+function() {
   mQ.end();
 }));
