@@ -22,10 +22,10 @@ EpochThreadStream.prototype.createThreadStream = function (err, oldBoardId, newB
     ID_FIRST_MSG : 'post_id'
   }
 
-  var rowStreamWhere = this.mQ.createRowStreamWhere(null, table, { ID_BOARD : oldBoardId});
+  var rowStreamWhere = this.mQ.createRowStreamWhere(table, { ID_BOARD : oldBoardId});
   var mQ = this.mQ;
   var tr = through2.obj(function (row, enc, cb) {
-    mQ.getRowsWhere(null, 'smf_messages', { ID_MSG : row.ID_FIRST_MSG }, function (err, firstPost) {
+    mQ.getRowsWhere('smf_messages', { ID_MSG : row.ID_FIRST_MSG }, function (err, firstPost) {
       firstPost = firstPost[0];
       var obj = epochMap.remapObject(firstPost, tableMap);
       obj['board_id'] = newBoardId;

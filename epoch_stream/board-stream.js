@@ -20,7 +20,7 @@ EpochBoardStream.prototype.createBoardStream = function (err) {
     ID_BOARD : 'board_id'
   }
 
-  var rowStream = this.mQ.createRowStream(null, table);
+  var rowStream = this.mQ.createRowStream(table);
   var tr = through2.obj(function (row, enc, cb) {
     var obj = epochMap.remapObject(row, tableMap);
     var smfObject = epochMap.remapObject(row, smfMap);

@@ -21,7 +21,7 @@ EpochPostStream.prototype.createPostStream = function (err, oldThreadId, newThre
     ID_MSG : 'post_id'
   }
 
-  var rowStreamWhere = this.mQ.createRowStreamWhere(null, table, { ID_TOPIC : oldThreadId});
+  var rowStreamWhere = this.mQ.createRowStreamWhere(table, { ID_TOPIC : oldThreadId});
   var tr = through2.obj(function (row, enc, cb) {
     var obj = epochMap.remapObject(row, tableMap);
     // Handling for created_at

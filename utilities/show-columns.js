@@ -3,7 +3,7 @@ var mysqlQuerier = require(path.join(__dirname, '..', 'mysql_querier', 'mysql-qu
 var config = require(path.join(__dirname, '..', 'config.json'));
 mQ = mysqlQuerier(config);
 
-mQ.getColumns(null, process.argv[2], function (err, columns) {
+mQ.getColumns(process.argv[2], function (err, columns) {
   if (err) {
     console.log(err);
   }

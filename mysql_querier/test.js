@@ -7,7 +7,7 @@ var through2 = require('through2');
 
 var tests = {
   getTables: function (callback) {
-           mQ.getTables(null, function (err, tables) {
+           mQ.getTables(function (err, tables) {
              if (err) {
                console.log(err);
              }
@@ -17,7 +17,7 @@ var tests = {
            });
          },
   getColumns: function (callback) {
-            mQ.getColumns(null, 'test_table', function (err, columns) {
+            mQ.getColumns('test_table', function (err, columns) {
               if (err) {
                 console.log(err);
               }
@@ -28,7 +28,7 @@ var tests = {
             });
           },
   getRowsWhere: function (callback) {
-                  var rowsWhere = mQ.getRowsWhere(null, 'test_table', { percent: 10 },
+                  var rowsWhere = mQ.getRowsWhere('test_table', { percent: 10 },
                       function (err, rows) {
                         if (err) {
                           console.log(err);
@@ -40,7 +40,7 @@ var tests = {
                       });
                 },
   rowStream: function (callback) {
-           var rowStream = mQ.createRowStream(null, 'test_table');
+           var rowStream = mQ.createRowStream('test_table');
            var rowStreamT2 = through2.obj(function (row, enc, cb) {
              console.log('testRowStream: ');
              console.log(row.percent);
@@ -53,7 +53,7 @@ var tests = {
          },
 
   rowStreamWhere: function (callback) {
-            var rowStreamWhere = mQ.createRowStreamWhere(null, 'test_table', { percent: 10 });
+            var rowStreamWhere = mQ.createRowStreamWhere('test_table', { percent: 10 });
             var rowStreamWhereT2 = through2.obj(function (row, enc, cb) {
               console.log('testRowStreamWhere: ' + row.percent);
               cb();

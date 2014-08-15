@@ -3,7 +3,7 @@ var mysqlQuerier = require(path.join(__dirname, '..', 'mysql_querier', 'mysql-qu
 var config = require(path.join(__dirname, '..', 'config.json'));
 var mQ = mysqlQuerier(config);
 
-mQ.getTables(null, function (err, tables) {
+mQ.getTables(function (err, tables) {
   if (err) throw err;
   console.log(tables);
   mQ.end();
