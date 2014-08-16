@@ -1,7 +1,7 @@
 {
-  "name": "smf-importer",
+  "name": "smf-import",
   "version": "0.0.0",
-  "main": "./smf-importer.js",
+  "main": "smf-import",
   "repository": {
     "type": "git"
   },

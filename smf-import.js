@@ -1,8 +1,8 @@
-module.exports = function smfImporter(debug, topCallback) {
+module.exports = function smfImport(debug, topCallback) {
   var path = require('path');
   var through2 = require('through2');
   var epochStream = require(path.join(__dirname, 'epoch_stream'));
-  var core = require('epochcore')();
+  var core = require('epochcore')(path.join(__dirname, 'epoch.db'));
   var mysqlQuerier = require(path.join(__dirname, 'mysql_querier'));
   var mQConfig = require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
   var mQ = mysqlQuerier(mQConfig);
@@ -63,7 +63,7 @@ module.exports = function smfImporter(debug, topCallback) {
                   else {
                     core.posts.import(postObject)
                   .then(function(newPost) {
-                    trPostCb();  // Don't return.  Async will handle end. 
+                    trPostCb();  // Don't return.  Async will handle end.
 
                     if (debug) {
                       console.log('postId: '+newPost.smf.post_id);
