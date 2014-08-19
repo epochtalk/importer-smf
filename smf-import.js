@@ -1,11 +1,11 @@
 module.exports = function smfImport(args, topCallback) {
   var debug = args.debug;
-  var leveldbPath= args.leveldbPath;
+  var leveldbPath= args.db;
 
   var path = require('path');
   var through2 = require('through2');
   var epochStream = require(path.join(__dirname, 'epoch_stream'));
-  var core = require('epochcore')(path.join(leveldbPath, 'epoch.db'));
+  var core = require('epochcore')(leveldbPath);
   var mysqlQuerier = require(path.join(__dirname, 'mysql_querier'));
   var mQConfig = require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
   var mQ = mysqlQuerier(mQConfig);
