@@ -1,7 +1,6 @@
 var path = require('path');
-var smfImporter = require(path.join(__dirname, '..', 'smf-importer'));
-var debug = true;
+var smfImporter = require(path.join(__dirname, '..', 'smf-import'));
 
-smfImporter(debug, function() {
+smfImporter({debug: true, db: path.join(__dirname, 'epoch.db')}, function() {
   console.log('done');
 });
