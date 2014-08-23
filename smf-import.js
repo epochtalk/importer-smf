@@ -55,7 +55,7 @@ module.exports = function smfImport(args, topCallback) {
                 if (debug) {
                   console.log('threadId: '+oldThreadId);
                 }
-                var newThreadId = newThread.thread_id;
+                var newThreadId = newThread.id;
                 var firstPostId = newThread.smf.post_id;
                 var postStream = epochStream.createPostStream(mQ, oldThreadId, newThreadId);
 
