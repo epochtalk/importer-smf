@@ -5,12 +5,11 @@ var through2 = require('through2');
 module.exports = function(mQ, oldBoardId, newBoardId) {
   var table = 'smf_topics';
   var tableMap = {
-    subject : 'title',
-    body: 'body',
     posterTime: 'created_at'
   }
 
   var smfMap = {
+    ID_BOARD : 'board_id',
     ID_TOPIC : 'thread_id',
     ID_FIRST_MSG : 'post_id'
   }

@@ -44,14 +44,13 @@ SMF Topics -> Epoch Threads
 <H4>Fields from Topic</H4>
 SMF Field | Epoch mapping
 ----------|--------------
+ID_BOARD | smf.board_id
 ID_TOPIC | smf.thread_id
 ID_FIRST_MSG | smf.post_id
 
 <H4>Fields from First Message</H4>
 SMF Field | Epoch mapping
 ----------|--------------
-subject | title
-body | body
 posterTime | created_at
 
 <H3>Not Implemented</H3>
