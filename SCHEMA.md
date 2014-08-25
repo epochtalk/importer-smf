@@ -44,7 +44,6 @@ SMF Topics -> Epoch Threads
 <H4>Fields from Topic</H4>
 SMF Field | Epoch mapping
 ----------|--------------
-ID_BOARD | smf.board_id
 ID_TOPIC | smf.thread_id
 ID_FIRST_MSG | smf.post_id
 
