@@ -11,6 +11,7 @@ module.exports = function(mQ, oldThreadId, newThreadId) {
   }
 
   var smfMap = {
+    ID_MEMBER : 'ID_MEMBER',
     ID_MSG : 'post_id'
   }
 

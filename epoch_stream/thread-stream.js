@@ -9,6 +9,7 @@ module.exports = function(mQ, oldBoardId, newBoardId) {
   }
 
   var smfMap = {
+    ID_MEMBER : 'ID_MEMBER',
     ID_TOPIC : 'thread_id',
     ID_FIRST_MSG : 'post_id'
   }

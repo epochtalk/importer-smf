@@ -96,3 +96,78 @@ modifiedTime | (none)
 modifiedName | (none)
 icon | (none)
 gpbp_score | (none)
+
+
+SMF Members -> Epoch Users
+--------------------------
+
+<H3>Implemented</H3>
+
+SMF Field | Epoch mapping
+----------|--------------
+ID_MEMBER | smf.ID_MEMBER
+memberName | username
+emailAddress | email
+
+<H3>Not Implemented</H3>
+
+SMF Field | Epoch mapping
+----------|--------------
+dateRegistered | (none)
+posts | (none)
+ID_GROUP | (none)
+lngfile | (none)
+lastLogin | (none)
+realName | (none)
+instantMessages | (none)
+unreadMessages | (none)
+buddy_list | (none)
+pm_ignore_list | (none)
+ign_ignore_list | (none)
+messageLabels | (none)
+passwd | (none)
+personalText | (none)
+gender | (none)
+birthdate | (none)
+websiteTitle | (none)
+websiteUrl | (none)
+location | (none)
+ICQ | (none)
+AIM | (none)
+YIM | (none)
+MSN | (none)
+hideEmail | (none)
+showOnline | (none)
+timeFormat | (none)
+signature | (none)
+timeOffset | (none)
+avatar | (none)
+pm_email_notify | (none)
+karmaBad | (none)
+karmaGood | (none)
+usertitle | (none)
+notifyAnnouncements | (none)
+notifyOnce | (none)
+notifySendBody | (none)
+notifyTypes | (none)
+memberIP | (none)
+memberIP2 | (none)
+secretQuestion | (none)
+secretAnswer | (none)
+ID_THEME | (none)
+is_activated | (none)
+validation_code | (none)
+ID_MSG_LAST_VISIT | (none)
+additionalGroups | (none)
+smileySet | (none)
+ID_POST_GROUP | (none)
+totalTimeLoggedIn | (none)
+passwordSalt | (none)
+gpbp_respect | (none)
+ignoreBoards | (none)
+autoWatch | (none)
+maxdepth | (none)
+activity | (none)
+lastpatrolled | (none)
+proxyban | (none)
+regIP | (none)
