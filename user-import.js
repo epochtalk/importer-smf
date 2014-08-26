@@ -6,9 +6,13 @@ module.exports = function smfImport(args, topCallback) {
   var through2 = require('through2');
   var epochStream = require(path.join(__dirname, 'epoch_stream'));
   var core = require('epochcore')(leveldbPath);
-  var mysqlQuerier = require(path.join(__dirname, 'mysql_querier'));
+  var MysqlQuerier = require(path.join(__dirname, 'mysql_querier'));
   var mQConfig = require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
-  var mQ = mysqlQuerier(mQConfig);
+  var mQ = new MysqlQuerier(mQConfig, function(err) {
+    if (err) {
+      return topCallback(mQ.err);
+    }
+  });
 
   var async = require('async');
   var concurrency = Number.MAX_VALUE; // Concurrency handled by lolipop

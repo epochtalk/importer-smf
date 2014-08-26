@@ -6,9 +6,14 @@ module.exports = function smfImport(args, topCallback) {
   var through2 = require('through2');
   var epochStream = require(path.join(__dirname, 'epoch_stream'));
   var core = require('epochcore')(leveldbPath);
-  var mysqlQuerier = require(path.join(__dirname, 'mysql_querier'));
+  var MysqlQuerier = require(path.join(__dirname, 'mysql_querier'));
   var mQConfig = require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
-  var mQ = mysqlQuerier(mQConfig);
+  var mQ = new MysqlQuerier(mQConfig, function(err) {
+    if (err) {
+      console.log('error out');
+      return topCallback(err);
+    }
+  });
 
   var async = require('async');
   var concurrency = Number.MAX_VALUE; // Concurrency handled by lolipop
@@ -33,7 +38,6 @@ module.exports = function smfImport(args, topCallback) {
     boardStream.pipe(through2.obj(function(boardObject, enc, trBoardCb) {
       core.boards.import(boardObject)
       .then(function(newBoard) {
-        console.log(boardObject);
         trBoardCb();  // Don't return.  Async will handle end.
 
         asyncQueue.push(function(asyncThreadCb) {
