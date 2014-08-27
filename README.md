@@ -66,7 +66,7 @@ available in files:  [post-stream](./epoch_stream/post-stream.js),
 [thread-stream](./epoch_stream/thread-stream.js), and
 [board-stream](./epoch_stream/board-stream.js). 
 
-These implementations are combined in [smf-importer](./smf-importer.js), where
+These implementations are combined in [smf-import](./smf-import.js), where
 a waterfall/hierarchical approach is taken to stream Boards, Threads from each
 board, and Posts from each thread by setting appropriate fields by newId via
 callback function of the importer method used.
