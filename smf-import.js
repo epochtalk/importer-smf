@@ -69,18 +69,21 @@ module.exports = function smfImport(args, topCallback) {
                   })
                 .catch(function(err) {
                   console.log(err);
+                  trPostCb();
                 });
                 }, asyncPostCb));  // When stream is empty, worker is done
               });
             })
           .catch(function(err) { // Catch core.threads.import
             console.log(err);
+            trThreadCb();
           });
           }, asyncThreadCb));  // When stream is empty, worker is done
         });
       })
     .catch(function(err) {
       console.log(err);
+      trBoardCb();
     });
     }, asyncBoardCb));  // When stream is empty, worker is done
   });
