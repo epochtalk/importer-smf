@@ -68,6 +68,7 @@ module.exports = function smfImport(args, topCallback) {
                     }
                   })
                 .catch(function(err) {
+                  console.log('Post Error:');
                   console.log(err);
                   trPostCb();
                 });
@@ -75,6 +76,7 @@ module.exports = function smfImport(args, topCallback) {
               });
             })
           .catch(function(err) { // Catch core.threads.import
+            console.log('Thread Error:');
             console.log(err);
             trThreadCb();
           });
@@ -82,6 +84,7 @@ module.exports = function smfImport(args, topCallback) {
         });
       })
     .catch(function(err) {
+      console.log('Board Error:');
       console.log(err);
       trBoardCb();
     });
