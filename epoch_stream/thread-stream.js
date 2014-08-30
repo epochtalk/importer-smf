@@ -14,10 +14,30 @@ module.exports = function(mQ, oldBoardId, newBoardId) {
     ID_FIRST_MSG : 'post_id'
   }
 
+  var messageColumns = [
+    'icon',
+    'ID_BOARD',
+    'posterTime',
+    'ID_MSG',
+    'modifiedTime',
+    'ID_MEMBER',
+    'subject',
+    'body',
+    'modifiedName',
+    'posterName',
+    'ID_TOPIC',
+    'ID_MSG_MODIFIED',
+    'smileysEnabled'
+  ];
+
   var rowStreamWhere = mQ.createRowStreamWhere(table, { ID_BOARD : oldBoardId});
   var tr = through2.obj(function(row, enc, cb) {
-    mQ.getRowsWhere('smf_messages', { ID_MSG : row.ID_FIRST_MSG }, function(err, firstPost) {
-      if(firstPost) {
+    mQ.getRowsWhereColumn('smf_messages', { ID_MSG : row.ID_FIRST_MSG },
+     messageColumns, function(err, firstPost) {
+      if (err) {
+        console.log(err);
+      }
+      else if(firstPost) {
         firstPost = firstPost[0];
         var obj = epochMap.remapObject(firstPost, tableMap);
         obj['board_id'] = newBoardId;
@@ -26,7 +46,7 @@ module.exports = function(mQ, oldBoardId, newBoardId) {
         tr.push(obj);
       }
       else {
-        console.log('First post for thread ' + '');
+        console.log('First post for thread does not exits');
       }
       return cb();
     });

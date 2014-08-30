@@ -27,6 +27,11 @@ var MysqlQuerier = {
       return callback(err, rows);
     });
   },
+  getRowsWhereColumn: function(table, obj, columns, callback) {
+    pool.query('SELECT ?? FROM ?? WHERE ?', [columns, table, obj], function(err, rows) {
+      return callback(err, rows);
+    });
+  },
   createRowStream: function(table, columns) {
     if (Array.isArray(columns)) {
       return pool.query('SELECT ?? FROM ??', [columns, table]).stream();
