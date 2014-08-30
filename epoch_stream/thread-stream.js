@@ -17,12 +17,17 @@ module.exports = function(mQ, oldBoardId, newBoardId) {
   var rowStreamWhere = mQ.createRowStreamWhere(table, { ID_BOARD : oldBoardId});
   var tr = through2.obj(function(row, enc, cb) {
     mQ.getRowsWhere('smf_messages', { ID_MSG : row.ID_FIRST_MSG }, function(err, firstPost) {
-      firstPost = firstPost[0];
-      var obj = epochMap.remapObject(firstPost, tableMap);
-      obj['board_id'] = newBoardId;
-      var smfObject = epochMap.remapObject(row, smfMap);
-      obj['smf'] = smfObject;
-      tr.push(obj);
+      if(firstPost) {
+        firstPost = firstPost[0];
+        var obj = epochMap.remapObject(firstPost, tableMap);
+        obj['board_id'] = newBoardId;
+        var smfObject = epochMap.remapObject(row, smfMap);
+        obj['smf'] = smfObject;
+        tr.push(obj);
+      }
+      else {
+        console.log('First post for thread ' + '');
+      }
       return cb();
     });
   });
