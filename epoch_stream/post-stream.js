@@ -15,7 +15,23 @@ module.exports = function(mQ, oldThreadId, newThreadId) {
     ID_MSG : 'post_id'
   }
 
-  var rowStreamWhere = mQ.createRowStreamWhere(table, { ID_TOPIC : oldThreadId});
+  var columns = [
+    'icon',
+    'ID_BOARD',
+    'posterTime',
+    'ID_MSG',
+    'modifiedTime',
+    'ID_MEMBER',
+    'subject',
+    'body',
+    'modifiedName',
+    'posterName',
+    'ID_TOPIC',
+    'ID_MSG_MODIFIED',
+    'smileysEnabled'
+  ];
+
+  var rowStreamWhere = mQ.createRowStreamWhere(table, { ID_TOPIC : oldThreadId}, columns);
   var tr = through2.obj(function(row, enc, cb) {
     var obj = epochMap.remapObject(row, tableMap);
     // Handling for created_at
