@@ -27,11 +27,21 @@ var MysqlQuerier = {
       return callback(err, rows);
     });
   },
-  createRowStream: function(table) {
-    return pool.query('SELECT * FROM ??', table).stream();
+  createRowStream: function(table, columns) {
+    if (Array.isArray(columns)) {
+      return pool.query('SELECT ?? FROM ??', [columns, table]).stream();
+    }
+    else {
+      return pool.query('SELECT * FROM ??', table).stream();
+    }
   },
-  createRowStreamWhere: function(table, obj) {
-    return pool.query('SELECT * FROM ?? WHERE ?', [table,obj]).stream();
+  createRowStreamWhere: function(table, obj, columns) {
+    if (Array.isArray(columns)) {
+      return pool.query('SELECT ?? FROM ?? WHERE ?', [columns, table, obj]).stream();
+    }
+    else {
+      return pool.query('SELECT * FROM ?? WHERE ?', [table, obj]).stream();
+    }
   },
   end: function(callback) {
     if (callback && typeof(callback) === "function") {
