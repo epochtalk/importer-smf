@@ -40,7 +40,6 @@ module.exports = function smfImport(args, topCallback) {
       .catch(function(err) {
         console.log("ERROR");
         console.log(err);
-        console.log(err.cause._object.smf);
         trUserCb();
       });
     }, asyncUserCb));  // When stream is empty, worker is done
