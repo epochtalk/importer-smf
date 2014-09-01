@@ -4,27 +4,50 @@ var objectBuilder = require(path.join(__dirname, 'object-builder'));
 var oldObject = {
   someTime: 10,
   otherTime: 1000,
+  zeroTime: 0,
   invalidTime: null,
+  stringTime: '100',
+  invalidStringTime: 'Not a time',
   someProperty: 'Hello World',
   otherProperty: 'All your base are belong to us',
   invalidProperty: '',
   CAPS_LOCK: 'CRUISE CONTROL',
-  UNDER_SCORE: 'OVER-SCORE'
+  UNDER_SCORE: 'OVER-SCORE',
+  ZERO_FIELD: 0,
+  EMPTY_STRING: '',
+  NULL_FIELD: null
 };
 
 var objectMap = {
   someProperty: 'title',
-  otherProperty: 'body',
+  otherProperty: 'body'
+};
+var safeObjectMap = {
   invalidProperty: 'invalid_property'
 };
 var timeMap = {
   someTime: 'created_at',
   otherTime: 'updated_at',
-  invalidTime: 'invalid_time'
+  zeroTime: 'zero_time'
+};
+var safeTimeMap = {
+  invalidTime: 'invalid_time',
+  stringTime: 'string_time',
+  invalidStringTime: 'invalid_string_time'
 };
 var smfMap = [
   'CAPS_LOCK',
-  'UNDER_SCORE'
+  'UNDER_SCORE',
+  'ZERO_FIELD',
+  'EMPTY_STRING',
+  'NULL_FIELD'
+];
+var safeSmfMap = [
+  'CAPS_LOCK',
+  'UNDER_SCORE',
+  'ZERO_FIELD',
+  'EMPTY_STRING',
+  'NULL_FIELD'
 ];
 
 var key = 'this_key';
@@ -33,9 +56,12 @@ var otherKey = 'invalid_key';
 var invalidValue = null;
 
 objectBuilder.map(oldObject, objectMap);
+objectBuilder.map(oldObject, objectMap, {validate: true});
 objectBuilder.mapTime(oldObject, timeMap);
-objectBuilder.smfMap(oldObject, smfMap);
+objectBuilder.mapTime(oldObject, safeTimeMap, {validate: true});
+objectBuilder.subMap(oldObject, smfMap, {key: 'smf'});
+objectBuilder.subMap(oldObject, safeSmfMap, {key: 'smf_safe', validate: 'true'});
 objectBuilder.insert(key, value);
-objectBuilder.insert(otherKey, invalidValue);
+objectBuilder.insert(otherKey, invalidValue, {validate: true});
 
 console.log(objectBuilder.toObject());

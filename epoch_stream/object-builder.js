@@ -1,34 +1,40 @@
 var newObject = {};
+var defaultOptions = {
+  validate: false
+};
+
+var helper = {
+  process: function(value, validate) {
+    return validate ? value ? value : undefined : value;
+  }
+};
 
 var objectBuilder = {
   toObject: function() {
     return newObject;
   },
-  map: function(oldObject, map) {
+  map: function(oldObject, map, options) {
     for (oldKey in map) {
       var newKey = map[oldKey];
-      newObject[newKey] = oldObject[oldKey] ? oldObject[oldKey] : undefined;
+      newObject[newKey] = helper.process(oldObject[oldKey], options ? options.validate : defaultOptions.validate);
     }
   },
-  mapTime: function(oldObject, map) {
+  mapTime: function(oldObject, map, options) {
     for (oldKey in map) {
       var newKey = map[oldKey];
-      newObject[newKey] = objectBuilder.checkValid(oldObject[oldKey]*1000);
+      newObject[newKey] = helper.process(oldObject[oldKey]*1000, options ? options.validate : defaultOptions.validate);
     }
   },
-  smfMap: function(oldObject, map) {
+  subMap: function(oldObject, map, options) {
     var smfObject = {};
     map.forEach(function (key) {
-      smfObject[key] = objectBuilder.checkValid(oldObject[key]);
+      smfObject[key] = helper.process(oldObject[key], options ? options.validate : defaultOptions.validate);
     });
-    newObject.smf = smfObject;
+    newObject[options.key] = smfObject;
   },
-  insert: function(key, value) {
-    newObject[key] = objectBuilder.checkValid(value);
-  },
-  checkValid: function(value) {
-    return value ? value : undefined;
+  insert: function(key, value, options) {
+    newObject[key] = helper.process(value, options ? options.validate : defaultOptions.validate);
   }
-}
+};
 
 module.exports = objectBuilder;
