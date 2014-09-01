@@ -15,6 +15,7 @@ var oldObject = {
   UNDER_SCORE: 'OVER-SCORE',
   ZERO_FIELD: 0,
   EMPTY_STRING: '',
+  ANOTHER_FIELD: 'flowers',
   NULL_FIELD: null
 };
 
@@ -35,19 +36,25 @@ var safeTimeMap = {
   stringTime: 'string_time',
   invalidStringTime: 'invalid_string_time'
 };
-var smfMap = [
+var subMap = [
   'CAPS_LOCK',
   'UNDER_SCORE',
   'ZERO_FIELD',
   'EMPTY_STRING',
   'NULL_FIELD'
 ];
-var safeSmfMap = [
+var subMapAgain = [
+  'ANOTHER_FIELD'
+];
+var safeSubMap = [
   'CAPS_LOCK',
   'UNDER_SCORE',
   'ZERO_FIELD',
   'EMPTY_STRING',
   'NULL_FIELD'
+];
+var safeSubMapAgain = [
+  'ANOTHER_FIELD'
 ];
 
 var key = 'this_key';
@@ -59,8 +66,10 @@ objectBuilder.map(oldObject, objectMap);
 objectBuilder.map(oldObject, objectMap, {validate: true});
 objectBuilder.mapTime(oldObject, timeMap);
 objectBuilder.mapTime(oldObject, safeTimeMap, {validate: true});
-objectBuilder.subMap(oldObject, smfMap, {key: 'smf'});
-objectBuilder.subMap(oldObject, safeSmfMap, {key: 'smf_safe', validate: 'true'});
+objectBuilder.subMap(oldObject, subMap, {key: 'sub'});
+objectBuilder.subMap(oldObject, subMapAgain, {key: 'sub'});
+objectBuilder.subMap(oldObject, safeSubMap, {key: 'sub_safe', validate: 'true'});
+objectBuilder.subMap(oldObject, safeSubMapAgain, {key: 'sub_safe', validate: 'true'});
 objectBuilder.insert(key, value);
 objectBuilder.insert(otherKey, invalidValue, {validate: true});
 

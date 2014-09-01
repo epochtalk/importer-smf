@@ -5,7 +5,7 @@ var defaultOptions = {
 
 var helper = {
   process: function(value, validate) {
-    return validate ? value ? value : undefined : value;
+    return validate ? (value ? value : undefined) : value;
   }
 };
 
@@ -26,11 +26,12 @@ var objectBuilder = {
     }
   },
   subMap: function(oldObject, map, options) {
-    var smfObject = {};
+    if (!newObject[options.key]) {
+      newObject[options.key] = {};
+    }
     map.forEach(function (key) {
-      smfObject[key] = helper.process(oldObject[key], options ? options.validate : defaultOptions.validate);
+      newObject[options.key][key] = helper.process(oldObject[key], options ? options.validate : defaultOptions.validate);
     });
-    newObject[options.key] = smfObject;
   },
   insert: function(key, value, options) {
     newObject[key] = helper.process(value, options ? options.validate : defaultOptions.validate);
