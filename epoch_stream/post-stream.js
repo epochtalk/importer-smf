@@ -1,5 +1,5 @@
 var path = require('path');
-var objectBuilder = require(path.join(__dirname, 'object-builder'));
+var ObjectBuilder = require(path.join(__dirname, 'object-builder'));
 var through2 = require('through2');
 
 module.exports = function(mQ, oldThreadId, newThreadId) {
@@ -35,11 +35,12 @@ module.exports = function(mQ, oldThreadId, newThreadId) {
 
   var rowStreamWhere = mQ.createRowStreamWhere(table, { ID_TOPIC : oldThreadId}, columns);
   var tr = through2.obj(function(row, enc, cb) {
+    var objectBuilder = new ObjectBuilder();
     objectBuilder.map(row, tableMapSafe, {validate: true});
     objectBuilder.mapTime(row, timeMapSafe, {validate: true});
     objectBuilder.subMap(row, smfMap, {key: 'smf'});
     objectBuilder.insert('thread_id', newThreadId);
-    this.push(objectBuilder.toObject());
+    this.push(objectBuilder.newObject);
     return cb();
   });
   postStream = rowStreamWhere.pipe(tr);

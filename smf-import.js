@@ -33,11 +33,12 @@ module.exports = function smfImport(args, topCallback) {
     boardStream.pipe(through2.obj(function(boardObject, enc, trBoardCb) {
       core.boards.import(boardObject)
       .then(function(newBoard) {
+        console.log(boardObject);
         trBoardCb();  // Don't return.  Async will handle end.
 
         asyncQueue.push(function(asyncThreadCb) {
 
-          var oldBoardId = newBoard.smf.board_id;
+          var oldBoardId = newBoard.smf.ID_BOARD;
           if (debug) {
             console.log('boardId: '+oldBoardId);
           }
@@ -51,7 +52,7 @@ module.exports = function smfImport(args, topCallback) {
 
               asyncQueue.push(function(asyncPostCb) {
 
-                var oldThreadId = newThread.smf.thread_id;
+                var oldThreadId = newThread.smf.ID_TOPIC;
                 if (debug) {
                   console.log('threadId: '+oldThreadId);
                 }
@@ -64,7 +65,7 @@ module.exports = function smfImport(args, topCallback) {
                     trPostCb();  // Don't return.  Async will handle end.
 
                     if (debug) {
-                      console.log('postId: '+newPost.smf.post_id);
+                      console.log('postId: '+newPost.smf.ID_MSG);
                     }
                   })
                 .catch(function(err) {

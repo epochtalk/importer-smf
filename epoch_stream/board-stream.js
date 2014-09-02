@@ -1,5 +1,5 @@
 var path = require('path');
-var objectBuilder = require(path.join(__dirname, 'object-builder'));
+var ObjectBuilder = require(path.join(__dirname, 'object-builder'));
 var through2 = require('through2');
 
 module.exports = function(mQ) {
@@ -15,9 +15,10 @@ module.exports = function(mQ) {
 
   var rowStream = mQ.createRowStream(table);
   var tr = through2.obj(function(row, enc, cb) {
+    var objectBuilder = new ObjectBuilder();
     objectBuilder.map(row, tableMapSafe, {validate: true});
     objectBuilder.subMap(row, smfMap, {key: 'smf'});
-    this.push(objectBuilder.toObject());
+    this.push(objectBuilder.newObject);
     return cb();
   });
   boardStream = rowStream.pipe(tr);
