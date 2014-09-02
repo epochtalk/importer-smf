@@ -1,5 +1,5 @@
 var path = require('path');
-var ObjectBuilder = require(path.join(__dirname, 'object-builder'));
+var EpochCollection = require(path.join(__dirname, 'epoch-collection'));
 var through2 = require('through2');
 
 module.exports = function(mQ, oldThreadId, newThreadId) {
@@ -35,12 +35,12 @@ module.exports = function(mQ, oldThreadId, newThreadId) {
 
   var rowStreamWhere = mQ.createRowStreamWhere(table, { ID_TOPIC : oldThreadId}, columns);
   var tr = through2.obj(function(row, enc, cb) {
-    var objectBuilder = new ObjectBuilder();
-    objectBuilder.map(row, tableMapSafe, {validate: true});
-    objectBuilder.mapTime(row, timeMapSafe, {validate: true});
-    objectBuilder.subMap(row, smfMap, {key: 'smf'});
-    objectBuilder.insert('thread_id', newThreadId);
-    this.push(objectBuilder.newObject);
+    var epochCollection = new EpochCollection();
+    epochCollection.map(row, tableMapSafe, {validate: true});
+    epochCollection.mapTime(row, timeMapSafe, {validate: true});
+    epochCollection.subMap(row, smfMap, {key: 'smf'});
+    epochCollection.add('thread_id', newThreadId);
+    this.push(epochCollection.collection);
     return cb();
   });
   postStream = rowStreamWhere.pipe(tr);

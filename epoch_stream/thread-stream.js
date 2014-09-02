@@ -1,5 +1,5 @@
 var path = require('path');
-var ObjectBuilder = require(path.join(__dirname, 'object-builder'));
+var EpochCollection = require(path.join(__dirname, 'epoch-collection'));
 var through2 = require('through2');
 
 module.exports = function(mQ, oldBoardId, newBoardId) {
@@ -32,7 +32,7 @@ module.exports = function(mQ, oldBoardId, newBoardId) {
 
   var rowStreamWhere = mQ.createRowStreamWhere(table, { ID_BOARD : oldBoardId});
   var tr = through2.obj(function(row, enc, cb) {
-    var objectBuilder = new ObjectBuilder();
+    var epochCollection = new EpochCollection();
     mQ.getRowsWhereColumn('smf_messages', { ID_MSG : row.ID_FIRST_MSG },
      messageColumns, function(err, firstPost) {
       if (err) {
@@ -40,10 +40,10 @@ module.exports = function(mQ, oldBoardId, newBoardId) {
       }
       else if(firstPost) {
         firstPost = firstPost[0];
-        objectBuilder.mapTime(firstPost, timeMapSafe, {validate: 'true'});
-        objectBuilder.subMap(row, smfMap, {key: 'smf'});
-        objectBuilder.insert('board_id', newBoardId);
-        tr.push(objectBuilder.newObject);
+        epochCollection.mapTime(firstPost, timeMapSafe, {validate: 'true'});
+        epochCollection.subMap(row, smfMap, {key: 'smf'});
+        epochCollection.add('board_id', newBoardId);
+        tr.push(epochCollection.collection);
       }
       else {
         console.log('First post for thread does not exits');
