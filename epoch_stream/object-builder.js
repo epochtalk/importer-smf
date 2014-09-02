@@ -1,41 +1,38 @@
-var newObject = {};
-var defaultOptions = {
-  validate: false
-};
+var ObjectBuilder = module.exports = function ObjectBuilder() {
+  this.newObject = {};
+}
 
 var helper = {
   process: function(value, validate) {
     return validate ? (value ? value : undefined) : value;
   }
 };
-
-var objectBuilder = {
-  toObject: function() {
-    return newObject;
-  },
-  map: function(oldObject, map, options) {
-    for (oldKey in map) {
-      var newKey = map[oldKey];
-      newObject[newKey] = helper.process(oldObject[oldKey], options ? options.validate : defaultOptions.validate);
-    }
-  },
-  mapTime: function(oldObject, map, options) {
-    for (oldKey in map) {
-      var newKey = map[oldKey];
-      newObject[newKey] = helper.process(oldObject[oldKey]*1000, options ? options.validate : defaultOptions.validate);
-    }
-  },
-  subMap: function(oldObject, map, options) {
-    if (!newObject[options.key]) {
-      newObject[options.key] = {};
-    }
-    map.forEach(function (key) {
-      newObject[options.key][key] = helper.process(oldObject[key], options ? options.validate : defaultOptions.validate);
-    });
-  },
-  insert: function(key, value, options) {
-    newObject[key] = helper.process(value, options ? options.validate : defaultOptions.validate);
-  }
+var defaultOptions = {
+  validate: false
 };
 
-module.exports = objectBuilder;
+ObjectBuilder.prototype.map = function(oldObject, map, options) {
+  for (oldKey in map) {
+    var newKey = map[oldKey];
+    this.newObject[newKey] = helper.process(oldObject[oldKey], options ? options.validate : defaultOptions.validate);
+  }
+}
+ObjectBuilder.prototype.mapTime = function(oldObject, map, options) {
+  for (oldKey in map) {
+    var newKey = map[oldKey];
+    this.newObject[newKey] = helper.process(oldObject[oldKey]*1000, options ? options.validate : defaultOptions.validate);
+  }
+}
+ObjectBuilder.prototype.subMap = function(oldObject, map, options) {
+  if (!this.newObject[options.key]) {
+    this.newObject[options.key] = {};
+  }
+  var self = this;
+  map.forEach(function (key) {
+    //console.log(this.newObject);
+    self.newObject[options.key][key] = helper.process(oldObject[key], options ? options.validate : defaultOptions.validate);
+  });
+}
+ObjectBuilder.prototype.insert = function(key, value, options) {
+  this.newObject[key] = helper.process(value, options ? options.validate : defaultOptions.validate);
+}

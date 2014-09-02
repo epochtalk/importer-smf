@@ -1,5 +1,6 @@
 var path = require('path');
-var objectBuilder = require(path.join(__dirname, 'object-builder'));
+var ObjectBuilder = require(path.join(__dirname, 'object-builder'));
+var objectBuilder = new ObjectBuilder();
 
 var oldObject = {
   someTime: 10,
@@ -73,4 +74,4 @@ objectBuilder.subMap(oldObject, safeSubMapAgain, {key: 'sub_safe', validate: 'tr
 objectBuilder.insert(key, value);
 objectBuilder.insert(otherKey, invalidValue, {validate: true});
 
-console.log(objectBuilder.toObject());
+console.log(objectBuilder.newObject);
