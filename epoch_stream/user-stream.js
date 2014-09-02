@@ -1,14 +1,14 @@
 var path = require('path');
-var epochMap = require(path.join(__dirname, 'epoch-map'));
+var objectBuilder = require(path.join(__dirname, 'object-builder'));
 var through2 = require('through2');
 
 module.exports = function(mQ) {
   var table = 'smf_members';
-  var tableMap = {
+  var tableMapSafe = {
     memberName : 'username',
     emailAddress : 'email'
-  }
-  var smfFields = [
+  };
+  var smfMap = [
     'ID_MEMBER'
   ];
   var columns = [
@@ -75,13 +75,9 @@ module.exports = function(mQ) {
 
   var rowStream = mQ.createRowStream(table, columns);
   var tr = through2.obj(function(row, enc, cb) {
-    var obj = epochMap.remapObject(row, tableMap);
-    var smfObject = {};
-    smfFields.forEach(function(field) {
-      smfObject[field] = row[field];
-    });
-    obj.smf = smfObject;
-    this.push(obj);
+    objectBuilder.map(row, tableMapSafe, {validate: true});
+    objectBuilder.subMap(row, smfMap, {key: 'smf'});
+    this.push(objectBuilder.toObject());
     return cb();
   });
   userStream = rowStream.pipe(tr);

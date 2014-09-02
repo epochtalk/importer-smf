@@ -1,18 +1,18 @@
 var path = require('path');
-var epochMap = require(path.join(__dirname, 'epoch-map'));
+var objectBuilder = require(path.join(__dirname, 'object-builder'));
 var through2 = require('through2');
 
 module.exports = function(mQ, oldBoardId, newBoardId) {
   var table = 'smf_topics';
-  var tableMap = {
+  var timeMapSafe = {
+    modifiedTime: 'updated_at',
     posterTime: 'created_at'
-  }
+  };
 
-  var smfMap = {
-    ID_MEMBER : 'ID_MEMBER',
-    ID_TOPIC : 'thread_id',
-    ID_FIRST_MSG : 'post_id'
-  }
+  var smfMap = [
+    'ID_TOPIC',
+    'ID_FIRST_MSG'
+  ];
 
   var messageColumns = [
     'icon',
@@ -39,11 +39,10 @@ module.exports = function(mQ, oldBoardId, newBoardId) {
       }
       else if(firstPost) {
         firstPost = firstPost[0];
-        var obj = epochMap.remapObject(firstPost, tableMap);
-        obj['board_id'] = newBoardId;
-        var smfObject = epochMap.remapObject(row, smfMap);
-        obj['smf'] = smfObject;
-        tr.push(obj);
+        objectBuilder.mapTime(firstPost, timeMapSafe, {validate: 'true'});
+        objectBuilder.subMap(row, smfMap, {key: 'smf'});
+        objectBuilder.insert('board_id', newBoardId);
+        tr.push(objectBuilder.toObject());
       }
       else {
         console.log('First post for thread does not exits');

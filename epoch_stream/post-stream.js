@@ -1,19 +1,21 @@
 var path = require('path');
-var epochMap = require(path.join(__dirname, 'epoch-map'));
+var objectBuilder = require(path.join(__dirname, 'object-builder'));
 var through2 = require('through2');
 
 module.exports = function(mQ, oldThreadId, newThreadId) {
   var table = 'smf_messages';
-  var tableMap = {
+  var tableMapSafe = {
     subject : 'title',
-    body : 'body',
-    posterTime: 'created_at'
-  }
-
-  var smfMap = {
-    ID_MEMBER : 'ID_MEMBER',
-    ID_MSG : 'post_id'
-  }
+    body : 'body'
+  };
+  var timeMapSafe = {
+    posterTime: 'created_at',
+    modifiedTime: 'updated_at'
+  };
+  var smfMap = [
+    'ID_MEMBER',
+    'ID_MSG'
+  ];
 
   var columns = [
     'icon',
@@ -33,13 +35,11 @@ module.exports = function(mQ, oldThreadId, newThreadId) {
 
   var rowStreamWhere = mQ.createRowStreamWhere(table, { ID_TOPIC : oldThreadId}, columns);
   var tr = through2.obj(function(row, enc, cb) {
-    var obj = epochMap.remapObject(row, tableMap);
-    // Handling for created_at
-    obj['created_at'] = row.posterTime;
-    obj['thread_id'] = newThreadId;
-    var smfObject = epochMap.remapObject(row, smfMap);
-    obj['smf'] = smfObject;
-    this.push(obj);
+    objectBuilder.map(row, tableMapSafe, {validate: true});
+    objectBuilder.mapTime(row, timeMapSafe, {validate: true});
+    objectBuilder.subMap(row, smfMap, {key: 'smf'});
+    objectBuilder.insert('thread_id', newThreadId);
+    this.push(objectBuilder.toObject());
     return cb();
   });
   postStream = rowStreamWhere.pipe(tr);

@@ -11,7 +11,7 @@ SMF Boards -> Epoch Boards
 
 SMF Field | Epoch mapping
 ----------|--------------
-ID_BOARD | smf.board_id
+ID_BOARD | smf.ID_BOARD
 name | name
 description | description
 
@@ -44,13 +44,14 @@ SMF Topics -> Epoch Threads
 <H4>Fields from Topic</H4>
 SMF Field | Epoch mapping
 ----------|--------------
-ID_TOPIC | smf.thread_id
-ID_FIRST_MSG | smf.post_id
+ID_TOPIC | smf.ID_TOPIC
+ID_FIRST_MSG | smf.ID_FIRST_MSG
 
 <H4>Fields from First Message</H4>
 SMF Field | Epoch mapping
 ----------|--------------
 posterTime | created_at
+modifiedTime | updated_at
 
 <H3>Not Implemented</H3>
 
@@ -75,8 +76,9 @@ SMF Messages -> Epoch Posts
 
 SMF Field | Epoch mapping
 ----------|--------------
-ID_MSG | smf.post_id
+ID_MSG | smf.ID_MSG
 posterTime | created_at
+modifiedTime | updated_at
 subject | title
 body | body
 
@@ -92,7 +94,6 @@ posterName | (none)
 posterEmail | (none)
 posterIP | (none)
 smileysEnabled | (none)
-modifiedTime | (none)
 modifiedName | (none)
 icon | (none)
 gpbp_score | (none)
