@@ -37,7 +37,7 @@ module.exports = function smfImport(args, topCallback) {
       core.users.import(userObject)
       .then(function(newUser) {
         if (debug) {
-          console.log(newUser);
+          console.log(newUser.id);
         }
         trUserCb();  // Don't return.  Async will handle end.
       })
