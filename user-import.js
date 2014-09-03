@@ -10,7 +10,7 @@ module.exports = function smfImport(args, topCallback) {
   var mQConfig = require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
   var mQ = new MysqlQuerier(mQConfig, function(err) {
     if (err) {
-      return topCallback(mQ.err);
+      return topCallback(err);
     }
   });
 
