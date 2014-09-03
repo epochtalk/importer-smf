@@ -1,5 +1,7 @@
 all: clean users_again forum
 
+from_scratch: real_clean users forum
+
 users:
 	node test_drivers/test-user-import -d
 	cp -R epoch.db users.db
