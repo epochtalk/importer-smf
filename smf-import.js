@@ -31,68 +31,92 @@ module.exports = function smfImport(args, topCallback) {
     });
   }
 
-  asyncQueue.push(function(asyncBoardCb) {
+  async.series([
+      function(asyncSeriesCb) {
+        asyncQueue.push(function(asyncUserCb) {
+          var userStream = epochStream.createUserStream(mQ);
 
-    var boardStream = epochStream.createBoardStream(mQ);
-
-    boardStream.pipe(through2.obj(function(boardObject, enc, trBoardCb) {
-      core.boards.import(boardObject)
-      .then(function(newBoard) {
-        trBoardCb();  // Don't return.  Async will handle end.
-
-        asyncQueue.push(function(asyncThreadCb) {
-
-          var oldBoardId = newBoard.smf.ID_BOARD;
-          if (debug) {
-            console.log('boardId: '+oldBoardId);
-          }
-          var newBoardId = newBoard.id;
-          var threadStream = epochStream.createThreadStream(mQ, oldBoardId, newBoardId);
-
-          threadStream.pipe(through2.obj(function(threadObject, enc, trThreadCb) {
-            core.threads.import(threadObject)
-            .then(function(newThread) {
-              trThreadCb();  // Don't return.  Async will handle end.
-
-              asyncQueue.push(function(asyncPostCb) {
-
-                var oldThreadId = newThread.smf.ID_TOPIC;
-                if (debug) {
-                  console.log('threadId: '+oldThreadId);
-                }
-                var newThreadId = newThread.id;
-                var postStream = epochStream.createPostStream(mQ, oldThreadId, newThreadId);
-
-                postStream.pipe(through2.obj(function(postObject, enc, trPostCb) {
-                  core.posts.import(postObject)
-                  .then(function(newPost) {
-                    trPostCb();  // Don't return.  Async will handle end.
-
-                    if (debug) {
-                      console.log('postId: '+newPost.smf.ID_MSG);
-                    }
-                  })
-                .catch(function(err) {
-                  console.log('Post Error:');
-                  console.log(err);
-                  trPostCb();
-                });
-                }, asyncPostCb));  // When stream is empty, worker is done
-              });
+          userStream.pipe(through2.obj(function(userObject, enc, trUserCb) {
+            core.users.import(userObject)
+            .then(function(newUser) {
+              if (debug) {
+                console.log(newUser.id);
+              }
+              trUserCb();  // Don't return.  Async will handle end.
             })
-          .catch(function(err) { // Catch core.threads.import
-            console.log('Thread Error:');
+          .catch(function(err) {
+            console.log("ERROR");
             console.log(err);
-            trThreadCb();
+            trUserCb();
           });
-          }, asyncThreadCb));  // When stream is empty, worker is done
-        });
-      })
-    .catch(function(err) {
-      console.log('Board Error:');
-      console.log(err);
-      trBoardCb();
+          }, asyncUserCb));  // When stream is empty, worker is done
+        }, asyncSeriesCb);
+      }
+    ],
+    function(err, results) {
+      asyncQueue.push(function(asyncBoardCb) {
+
+      var boardStream = epochStream.createBoardStream(mQ);
+
+      boardStream.pipe(through2.obj(function(boardObject, enc, trBoardCb) {
+        core.boards.import(boardObject)
+        .then(function(newBoard) {
+          trBoardCb();  // Don't return.  Async will handle end.
+
+          asyncQueue.push(function(asyncThreadCb) {
+
+            var oldBoardId = newBoard.smf.ID_BOARD;
+            if (debug) {
+              console.log('boardId: '+oldBoardId);
+            }
+            var newBoardId = newBoard.id;
+            var threadStream = epochStream.createThreadStream(mQ, oldBoardId, newBoardId);
+
+            threadStream.pipe(through2.obj(function(threadObject, enc, trThreadCb) {
+              core.threads.import(threadObject)
+              .then(function(newThread) {
+                trThreadCb();  // Don't return.  Async will handle end.
+
+                asyncQueue.push(function(asyncPostCb) {
+
+                  var oldThreadId = newThread.smf.ID_TOPIC;
+                  if (debug) {
+                    console.log('threadId: '+oldThreadId);
+                  }
+                  var newThreadId = newThread.id;
+                  var postStream = epochStream.createPostStream(mQ, oldThreadId, newThreadId);
+
+                  postStream.pipe(through2.obj(function(postObject, enc, trPostCb) {
+                    core.posts.import(postObject)
+                    .then(function(newPost) {
+                      trPostCb();  // Don't return.  Async will handle end.
+
+                      if (debug) {
+                        console.log('postId: '+newPost.smf.ID_MSG);
+                      }
+                    })
+                  .catch(function(err) {
+                    console.log('Post Error:');
+                    console.log(err);
+                    trPostCb();
+                  });
+                  }, asyncPostCb));  // When stream is empty, worker is done
+                });
+              })
+            .catch(function(err) { // Catch core.threads.import
+              console.log('Thread Error:');
+              console.log(err);
+              trThreadCb();
+            });
+            }, asyncThreadCb));  // When stream is empty, worker is done
+          });
+        })
+      .catch(function(err) {
+        console.log('Board Error:');
+        console.log(err);
+        trBoardCb();
+      });
+      }, asyncBoardCb));  // When stream is empty, worker is done
     });
-    }, asyncBoardCb));  // When stream is empty, worker is done
   });
 }
