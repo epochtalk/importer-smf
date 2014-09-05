@@ -1,8 +1,10 @@
 module.exports = function smfImport(args, topCallback) {
   var debug = args.debug;
   var verbose = args.verbose;
+  var color = args.color;
   var leveldbPath= args.db;
 
+  var colors = require('colors');
   var path = require('path');
   var through2 = require('through2');
   var epochStream = require(path.join(__dirname, 'epoch_stream'));
@@ -24,8 +26,13 @@ module.exports = function smfImport(args, topCallback) {
   var pIC = 0;
 
   var printStats = function(userCount, boardCount, threadCount, postCount) {
-    process.stdout.write('users: ' + userCount + ' boards: ' + boardCount +
-      ' threads: ' + threadCount + ' posts: ' + postCount + '\r');
+    if (color) {
+      process.stdout.write(''.concat(''.concat('users: ', userCount).red, ''.concat(' boards: ', boardCount).yellow, ''.concat(' threads: ', threadCount).green, ''.concat(' posts: ', postCount).blue, ''.concat('\r')).bold);
+    }
+    else {
+      process.stdout.write('users: ' + userCount + ' boards: ' + boardCount +
+          ' threads: ' + threadCount + ' posts: ' + postCount + '\r');
+    }
   };
 
   var asyncQueue = async.queue(function(runTask, callback) {
