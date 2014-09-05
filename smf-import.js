@@ -17,7 +17,7 @@ module.exports = function smfImport(args, topCallback) {
   });
 
   var async = require('async');
-  var concurrency = Number.MAX_VALUE; // Concurrency handled by lolipop
+  var concurrency = 100;
   var uIC = 0;
   var bIC = 0;
   var tIC = 0;
