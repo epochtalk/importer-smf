@@ -8,6 +8,7 @@
   "dependencies": {
     "async": "^0.9.0",
     "rainbow-word": "git://github.com/unenglishable/rainbow-word",
+    "commander": "^2.3.0",
     "core": "git://github.com/epochtalk/core",
     "mysql": "^2.4.1",
     "through2": "^0.5.1"

@@ -1,7 +1,10 @@
 all: clean forum
 
 forum:
-	node test_drivers/test-smf-import -d
+	node index -d --color
+
+crazy: clean
+	node index -d --color crazy
 
 clean:
 	rm  -rf epoch.db
