@@ -2,9 +2,12 @@ module.exports = function smfImport(args, topCallback) {
   var debug = args.debug;
   var verbose = args.verbose;
   var color = args.color;
+  var save = color === 'crazy';
+  var bold = args.bold;
   var leveldbPath= args.db;
 
-  var colors = require('colors');
+  var rw = require('rainbow-word');
+  var rainbow = rw.pattern({bold: bold, save: save});
   var path = require('path');
   var through2 = require('through2');
   var epochStream = require(path.join(__dirname, 'epoch_stream'));
@@ -27,7 +30,12 @@ module.exports = function smfImport(args, topCallback) {
 
   var printStats = function(userCount, boardCount, threadCount, postCount) {
     if (color) {
-      process.stdout.write(''.concat(''.concat('users: ', userCount).red, ''.concat(' boards: ', boardCount).yellow, ''.concat(' threads: ', threadCount).green, ''.concat(' posts: ', postCount).blue, ''.concat('\r')).bold);
+      process.stdout.write(rainbow.color(
+        'users: ', userCount + ' ',
+        'boards: ', boardCount + ' ',
+        'threads: ', threadCount + ' ',
+        'posts: ', postCount + '\r'
+      ));
     }
     else {
       process.stdout.write('users: ' + userCount + ' boards: ' + boardCount +
