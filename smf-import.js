@@ -1,5 +1,4 @@
-module.exports = function smfImport(args, topCallback) {
-  var debug = args.debug;
+module.exports = function smfImport(args, topCallback) { var debug = args.debug;
   var verbose = args.verbose;
   var color = args.color;
   var users = args.users;
@@ -96,32 +95,31 @@ module.exports = function smfImport(args, topCallback) {
   }
 
   var userImport = function(asyncSeriesCb) {
-    asyncQueue.push(function(asyncUserCb) {
-      var userStream = epochStream.createUserStream(userMQ);
-      userStream.pipe(through2.obj(function(userObject, enc, trUserCb) {
-        core.users.import(userObject)
-        .then(function(newUser) {
-          if (verbose) {
-            uIC++;
-            printStats(uIC, bIC, tIC, pIC, eIC);
-          }
-          trUserCb();  // Don't return.  Async will handle end.
-        })
-        .catch(function(err) {
-          if (verbose) {
-            eIC++;
-            printStats(uIC, bIC, tIC, pIC, eIC);
-          }
-          if (logfile) {
-            log.write('User Error:\n');
-            log.write(err.toString()+'\n');
-          }
-          trUserCb();
-        });
-      }, asyncUserCb));  // When stream is empty, worker is done
-    }, asyncSeriesCb);
-  }
-  var forumImport = function(err, results) {
+    var userStream = epochStream.createUserStream(userMQ);
+    userStream.pipe(through2.obj(function(userObject, enc, trUserCb) {
+      core.users.import(userObject)
+      .then(function(newUser) {
+        if (verbose) {
+          uIC++;
+          printStats(uIC, bIC, tIC, pIC, eIC);
+        }
+        trUserCb();  // Don't return.  Async will handle end.
+      })
+      .catch(function(err) {
+        if (verbose) {
+          eIC++;
+          printStats(uIC, bIC, tIC, pIC, eIC);
+        }
+        if (logfile) {
+          log.write('User Error:\n');
+          log.write(err.toString()+'\n');
+        }
+        trUserCb();
+      });
+    }, asyncSeriesCb));  // When stream is empty, worker is done
+  };
+  var forumImport = function(asyncSeriesCb) {
+    console.log('something');
     asyncQueue.push(function(asyncBoardCb) {
 
       var boardStream = epochStream.createBoardStream(boardMQ);
@@ -206,8 +204,8 @@ module.exports = function smfImport(args, topCallback) {
           trBoardCb();
         });
       }, asyncBoardCb));  // When stream is empty, worker is done
-    });
-  }
+    }, asyncSeriesCb);
+  };
   var importers = [];
   if (users) {
     importers.push(userImport);
