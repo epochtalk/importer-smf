@@ -21,7 +21,12 @@ crazy: clean
 	./finished.sh
 
 clean:
-	rm -rf epoch.db
+	rm -rf epoch.db log.txt forumlog.txt
 
-real_clean: clean
-	rm -rf users.db
+clean_users:
+	rm -rf user.db userlog.txt
+
+clean_other:
+	rm -rf other.db other_log.txt
+
+real_clean: clean clean_users clean_other
