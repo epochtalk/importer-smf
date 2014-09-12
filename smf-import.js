@@ -89,7 +89,7 @@ module.exports = function smfImport(args, topCallback) {
     boardMQ.end();
     threadMQ.end();
     postMQ.end();
-    if (debug) {
+    if (verbose) {
       process.stdout.write('\n');
     }
     topCallback();
@@ -101,14 +101,14 @@ module.exports = function smfImport(args, topCallback) {
       userStream.pipe(through2.obj(function(userObject, enc, trUserCb) {
         core.users.import(userObject)
         .then(function(newUser) {
-          if (debug) {
+          if (verbose) {
             uIC++;
             printStats(uIC, bIC, tIC, pIC, eIC);
           }
           trUserCb();  // Don't return.  Async will handle end.
         })
         .catch(function(err) {
-          if (debug) {
+          if (verbose) {
             eIC++;
             printStats(uIC, bIC, tIC, pIC, eIC);
           }
@@ -146,14 +146,14 @@ module.exports = function smfImport(args, topCallback) {
                   postStream.pipe(through2.obj(function(postObject, enc, trPostCb) {
                     core.posts.import(postObject)
                     .then(function(newPost) {
-                      if (debug) {
+                      if (verbose) {
                         pIC++;
                         printStats(uIC, bIC, tIC, pIC, eIC);
                       }
                       trPostCb();  // Don't return.  Async will handle end.
                     })
                     .catch(function(err) {
-                      if (debug) {
+                      if (verbose) {
                         eIC++;
                         printStats(uIC, bIC, tIC, pIC, eIC);
                       }
@@ -165,7 +165,7 @@ module.exports = function smfImport(args, topCallback) {
                     });
                   }, function() {
                     asyncPostCb();
-                    if (debug) {
+                    if (verbose) {
                       tIC++;
                       printStats(uIC, bIC, tIC, pIC, eIC);
                     }
@@ -175,20 +175,18 @@ module.exports = function smfImport(args, topCallback) {
               })
               .catch(function(err) { // Catch core.threads.import
                 if (verbose) {
-                  if (debug) {
-                    eIC++;
-                    printStats(uIC, bIC, tIC, pIC, eIC);
-                  }
-                  if (logfile) {
-                    log.write('Thread Error:\n');
-                    log.write(err.toString()+'\n');
-                  }
+                  eIC++;
+                  printStats(uIC, bIC, tIC, pIC, eIC);
+                }
+                if (logfile) {
+                  log.write('Thread Error:\n');
+                  log.write(err.toString()+'\n');
                 }
                 trThreadCb();
               });
             }, function() {
               asyncThreadCb();
-              if (debug) {
+              if (verbose) {
                 bIC++;
                 printStats(uIC, bIC, tIC, pIC, eIC);
               }
@@ -197,7 +195,7 @@ module.exports = function smfImport(args, topCallback) {
           });
         })
         .catch(function(err) {
-          if (debug) {
+          if (verbose) {
             eIC++;
             printStats(uIC, bIC, tIC, pIC, eIC);
           }
