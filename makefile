@@ -1,9 +1,10 @@
 all: clean
-	node index -d --color --verbose
+	time node --max-old-space-size=8192 index -d --color --verbose --log log.txt
+	./finished.sh
 
 forum: clean
 	cp -R users.db epoch.db
-	time node --max-old-space-size=8192 index -d --color --verbose --forum --log log.txt
+	time node --max-old-space-size=8192 index -d --color --verbose --forum --log forumlog.txt
 	./finished.sh
 
 otherforum: clean
@@ -12,11 +13,12 @@ otherforum: clean
 	./finished.sh
 
 users: real_clean
-	time node --max-old-space-size=8192 index -d --color --verbose --users --leveldb users.db
+	time node --max-old-space-size=8192 index -d --color --verbose --users --leveldb users.db --log userlog.txt
 	./finished.sh
 
 crazy: clean
-	node index -d --color crazy
+	time node --max-old-space-size=8192 index -d --color crazy --verbose --log log.txt
+	./finished.sh
 
 clean:
 	rm -rf epoch.db
