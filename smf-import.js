@@ -59,19 +59,19 @@ module.exports = function smfImport(args, topCallback) {
   }
 
   async.series([
-      function(asyncSeriesCb) {
-        asyncQueue.push(function(asyncUserCb) {
-          var userStream = epochStream.createUserStream(mQ);
+    function(asyncSeriesCb) {
+      asyncQueue.push(function(asyncUserCb) {
+        var userStream = epochStream.createUserStream(mQ);
 
-          userStream.pipe(through2.obj(function(userObject, enc, trUserCb) {
-            core.users.import(userObject)
-            .then(function(newUser) {
-              uIC++;
-              if (debug) {
-                printStats(uIC, bIC, tIC, pIC);
-              }
-              trUserCb();  // Don't return.  Async will handle end.
-            })
+        userStream.pipe(through2.obj(function(userObject, enc, trUserCb) {
+          core.users.import(userObject)
+          .then(function(newUser) {
+            uIC++;
+            if (debug) {
+              printStats(uIC, bIC, tIC, pIC);
+            }
+            trUserCb();  // Don't return.  Async will handle end.
+          })
           .catch(function(err) {
             if (verbose) {
               console.log("ERROR");
@@ -79,12 +79,12 @@ module.exports = function smfImport(args, topCallback) {
             }
             trUserCb();
           });
-          }, asyncUserCb));  // When stream is empty, worker is done
-        }, asyncSeriesCb);
-      }
-    ],
-    function(err, results) {
-      asyncQueue.push(function(asyncBoardCb) {
+        }, asyncUserCb));  // When stream is empty, worker is done
+      }, asyncSeriesCb);
+    }
+  ],
+  function(err, results) {
+    asyncQueue.push(function(asyncBoardCb) {
 
       var boardStream = epochStream.createBoardStream(mQ);
 
@@ -143,33 +143,33 @@ module.exports = function smfImport(args, topCallback) {
                       }
                       */
                     })
-                  .catch(function(err) {
-                    if (verbose) {
-                      console.log('Post Error:');
-                      console.log(err);
-                    }
-                    trPostCb();
-                  });
+                    .catch(function(err) {
+                      if (verbose) {
+                        console.log('Post Error:');
+                        console.log(err);
+                      }
+                      trPostCb();
+                    });
                   }, asyncPostCb));  // When stream is empty, worker is done
                 });
               })
-            .catch(function(err) { // Catch core.threads.import
-              if (verbose) {
-                console.log('Thread Error:');
-                console.log(err);
-              }
-              trThreadCb();
-            });
+              .catch(function(err) { // Catch core.threads.import
+                if (verbose) {
+                  console.log('Thread Error:');
+                  console.log(err);
+                }
+                trThreadCb();
+              });
             }, asyncThreadCb));  // When stream is empty, worker is done
           });
         })
-      .catch(function(err) {
-        if (verbose) {
-          console.log('Board Error:');
-          console.log(err);
-        }
-        trBoardCb();
-      });
+        .catch(function(err) {
+          if (verbose) {
+            console.log('Board Error:');
+            console.log(err);
+          }
+          trBoardCb();
+        });
       }, asyncBoardCb));  // When stream is empty, worker is done
     });
   });
