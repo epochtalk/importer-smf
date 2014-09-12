@@ -8,6 +8,7 @@ program
   .option('-d, --debug [options]')
   .option('-v, --verbose [options]', '')
   .option('--color [options]', 'Color the output')
+  .option('--log <file>', 'Log errors to file')
   .parse(process.argv);
 
 var imp = require(path.join(__dirname, 'smf-import'));
@@ -15,6 +16,7 @@ var args = {
   db: program.leveldb,
   debug: program.debug,
   verbose: program.verbose,
+  log: program.log,
   color: program.color
 };
 
