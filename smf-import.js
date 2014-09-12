@@ -2,6 +2,8 @@ module.exports = function smfImport(args, topCallback) {
   var debug = args.debug;
   var verbose = args.verbose;
   var color = args.color;
+  var users = args.users;
+  var forum = args.forum;
   var save = color === 'crazy';
   var leveldbPath= args.db;
   var logfile = args.log;
@@ -208,6 +210,17 @@ module.exports = function smfImport(args, topCallback) {
       }, asyncBoardCb));  // When stream is empty, worker is done
     });
   }
+  var importers = [];
+  if (users) {
+    importers.push(userImport);
+  }
+  else if (forum) {
+    importers.push(forumImport);
+  }
+  else {
+    importers.push(userImport);
+    importers.push(forumImport);
+  }
 
-  async.series([userImport, forumImport]);
+  async.series(importers);
 }

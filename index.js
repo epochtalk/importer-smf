@@ -8,6 +8,8 @@ program
   .option('-d, --debug [options]')
   .option('-v, --verbose [options]', '')
   .option('--color [options]', 'Color the output')
+  .option('--users', 'Only import users')
+  .option('--forum', 'Only import boards, threads, and posts')
   .option('--log <file>', 'Log errors to file')
   .parse(process.argv);
 
@@ -16,6 +18,8 @@ var args = {
   db: program.leveldb,
   debug: program.debug,
   verbose: program.verbose,
+  users: program.users,
+  forum: program.forum,
   log: program.log,
   color: program.color
 };
