@@ -1,9 +1,11 @@
 {
-  "name": "smf-import",
+  "name": "epoch-smf-import",
   "version": "0.0.0",
-  "main": "smf-import",
   "repository": {
     "type": "git"
+  },
+  "bin": {
+    "epoch-smf-import": "index.js"
   },
   "dependencies": {
     "async": "^0.9.0",
