@@ -34,19 +34,21 @@ module.exports = function(mQ, oldBoardId, newBoardId) {
   var tr = through2.obj(function(row, enc, cb) {
     var epochCollection = new EpochCollection();
     mQ.getRowsWhereColumn('smf_messages', { ID_MSG : row.ID_FIRST_MSG },
-     messageColumns, function(err, firstPost) {
+     messageColumns, function(err, firstPostQuery) {
       if (err) {
         console.log(err);
       }
-      else if(firstPost) {
-        firstPost = firstPost[0];
-        epochCollection.mapTime(firstPost, timeMapSafe, {validate: 'true'});
+      else if(firstPostQuery) {
+        if (firstPostQuery.length > 0) {
+          var firstPost = firstPostQuery[0];
+          epochCollection.mapTime(firstPost, timeMapSafe, {validate: 'true'});
+        }
         epochCollection.subMap(row, smfMap, {key: 'smf'});
         epochCollection.add('board_id', newBoardId);
         tr.push(epochCollection.collection);
       }
       else {
-        console.log('First post for thread does not exits');
+        console.log('First post for thread does not exist');
       }
       return cb();
     });
