@@ -10,7 +10,7 @@ var MysqlQuerier = module.exports = function(config, callback) {
       callback(err);
     }
   });
-}
+};
 
 MysqlQuerier.prototype.getTables = function(callback) {
   var tables = [];
@@ -23,22 +23,22 @@ MysqlQuerier.prototype.getTables = function(callback) {
     }
     return callback(err, tables);
   });
-}
+};
 MysqlQuerier.prototype.getColumns = function(table, callback) {
   this.pool.query('SHOW columns FROM ??', table, function(err, rows) {
     return callback(err, rows);
   });
-}
+};
 MysqlQuerier.prototype.getRowsWhere = function(table, obj, callback) {
   this.pool.query('SELECT * FROM ?? WHERE ?', [table, obj], function(err, rows) {
     return callback(err, rows);
   });
-}
+};
 MysqlQuerier.prototype.getRowsWhereColumn = function(table, obj, columns, callback) {
   this.pool.query('SELECT ?? FROM ?? WHERE ?', [columns, table, obj], function(err, rows) {
     return callback(err, rows);
   });
-}
+};
 MysqlQuerier.prototype.createRowStream = function(table, columns) {
   if (Array.isArray(columns)) {
     return this.pool.query('SELECT ?? FROM ??', [columns, table]).stream();
@@ -46,7 +46,7 @@ MysqlQuerier.prototype.createRowStream = function(table, columns) {
   else {
     return this.pool.query('SELECT * FROM ??', table).stream();
   }
-}
+};
 MysqlQuerier.prototype.createRowStreamWhere = function(table, obj, columns) {
   if (Array.isArray(columns)) {
     return this.pool.query('SELECT ?? FROM ?? WHERE ?', [columns, table, obj]).stream();
@@ -54,7 +54,7 @@ MysqlQuerier.prototype.createRowStreamWhere = function(table, obj, columns) {
   else {
     return this.pool.query('SELECT * FROM ?? WHERE ?', [table, obj]).stream();
   }
-}
+};
 MysqlQuerier.prototype.end = function(callback) {
   if (callback && typeof(callback) === "function") {
     this.pool.end(callback());
@@ -62,4 +62,4 @@ MysqlQuerier.prototype.end = function(callback) {
   else {
     this.pool.end();
   }
-}
+};
