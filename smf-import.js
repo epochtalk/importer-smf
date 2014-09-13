@@ -67,4 +67,4 @@ module.exports = function smfImport(args, topCallback) { var debug = args.debug;
       topCallback();
     }
   );
-}
+};
