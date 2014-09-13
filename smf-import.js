@@ -24,18 +24,10 @@ module.exports = function smfImport(args, topCallback) { var debug = args.debug;
   var boardCfg;
   var threadCfg;
   var postCfg;
-  var userCfg;
-  userCfg = boardCfg = threadCfg = postCfg = require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
-  userCfg.connectionLimit = 1;
+  boardCfg = threadCfg = postCfg = require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
   boardCfg.connectionLimit = 1;
   threadCfg.connectionLimit = 10;
   postCfg.connectionLimit = 100;
-  var userMQ = new MysqlQuerier(userCfg, function(err) {
-    if (err) {
-      console.log('User Connection Error');
-      return topCallback(err);
-    }
-  });
   var boardMQ = new MysqlQuerier(boardCfg, function(err) {
     if (err) {
       console.log('Board Connection Error');
@@ -83,41 +75,11 @@ module.exports = function smfImport(args, topCallback) { var debug = args.debug;
     runTask(callback);
   }, concurrency);
 
-  asyncQueue.drain = function() {
-    userMQ.end();
-    boardMQ.end();
-    threadMQ.end();
-    postMQ.end();
-    if (verbose) {
-      process.stdout.write('\n');
-    }
-    topCallback();
-  }
-
-  var userImport = function(asyncSeriesCb) {
-    var userStream = epochStream.createUserStream(userMQ);
-    userStream.pipe(through2.obj(function(userObject, enc, trUserCb) {
-      core.users.import(userObject)
-      .then(function(newUser) {
-        if (verbose) {
-          uIC++;
-          printStats(uIC, bIC, tIC, pIC, eIC);
-        }
-        trUserCb();  // Don't return.  Async will handle end.
-      })
-      .catch(function(err) {
-        if (verbose) {
-          eIC++;
-          printStats(uIC, bIC, tIC, pIC, eIC);
-        }
-        if (logfile) {
-          log.write('User Error:\n');
-          log.write(err.toString()+'\n');
-        }
-        trUserCb();
-      });
-    }, asyncSeriesCb));  // When stream is empty, worker is done
+  var importUsers = require('./import-users');
+  var userImporter = function(asyncSeriesCb) {
+    importUsers(args, asyncSeriesCb);
   };
+
   var forumImport = function(asyncSeriesCb) {
     console.log('something');
     asyncQueue.push(function(asyncBoardCb) {
@@ -208,15 +170,25 @@ module.exports = function smfImport(args, topCallback) { var debug = args.debug;
   };
   var importers = [];
   if (users) {
-    importers.push(userImport);
+    importers.push(userImporter);
   }
   else if (forum) {
     importers.push(forumImport);
   }
   else {
-    importers.push(userImport);
+    importers.push(userImporter);
     importers.push(forumImport);
   }
 
-  async.series(importers);
+  async.series(importers,
+    function() {
+      boardMQ.end();
+      threadMQ.end();
+      postMQ.end();
+      if (verbose) {
+        process.stdout.write('\n');
+      }
+      topCallback();
+    }
+  );
 }
