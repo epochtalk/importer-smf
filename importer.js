@@ -27,8 +27,3 @@ var Importer = module.exports = function(args, callback) {
     });
   }, self.callback);
 };
-
-/*
-Importer.prototype.import = function(){
-};
-*/
