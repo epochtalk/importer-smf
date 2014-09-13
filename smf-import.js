@@ -22,19 +22,11 @@ module.exports = function smfImport(args, topCallback) { var debug = args.debug;
   var core = require('epochcore')(leveldbPath);
   var MysqlQuerier = require(path.join(__dirname, 'mysql_querier'));
   var boardCfg;
-  var threadCfg;
-  boardCfg = threadCfg = require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
+  boardCfg = require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
   boardCfg.connectionLimit = 1;
-  threadCfg.connectionLimit = 10;
   var boardMQ = new MysqlQuerier(boardCfg, function(err) {
     if (err) {
       console.log('Board Connection Error');
-      return topCallback(err);
-    }
-  });
-  var threadMQ = new MysqlQuerier(threadCfg, function(err) {
-    if (err) {
-      console.log('Thread Connection Error');
       return topCallback(err);
     }
   });
@@ -64,7 +56,7 @@ module.exports = function smfImport(args, topCallback) { var debug = args.debug;
   };
 
   var importUsers = require(path.join(__dirname,'epoch_importer','import-users'));
-  var importPosts = require(path.join(__dirname,'epoch_importer','import-posts'));
+  var importThreads = require(path.join(__dirname,'epoch_importer','import-threads'));
   var userImporter = function(asyncSeriesCb) {
     importUsers(args, asyncSeriesCb);
   };
@@ -75,41 +67,7 @@ module.exports = function smfImport(args, topCallback) { var debug = args.debug;
     boardStream.pipe(through2.obj(function(boardObject, enc, trBoardCb) {
       core.boards.import(boardObject)
       .then(function(newBoard) {
-        var oldBoardId = newBoard.smf.ID_BOARD;
-        var newBoardId = newBoard.id;
-        var threadStream = epochStream.createThreadStream(threadMQ, oldBoardId, newBoardId);
-        threadStream.pipe(through2.obj(function(threadObject, enc, trThreadCb) {
-          core.threads.import(threadObject)
-          .then(function(newThread) {
-            importPosts(args, newThread, trThreadCb);
-            /*
-              function() {
-              if (verbose) {
-                tIC++;
-                printStatus(uIC, bIC, tIC, pIC, eIC);
-              }
-              trThreadCb();
-            });
-            */
-          })
-          .catch(function(err) { // Catch core.threads.import
-            if (verbose) {
-              eIC++;
-              printStats(uIC, bIC, tIC, pIC, eIC);
-            }
-            if (logfile) {
-              log.write('Thread Error:\n');
-              log.write(err.toString()+'\n');
-            }
-            trThreadCb();
-          });
-        }, function() {
-          if (verbose) {
-            bIC++;
-            printStats(uIC, bIC, tIC, pIC, eIC);
-          }
-          trBoardCb();  // Don't return.  Async will handle end.
-        }));  // When stream is empty, worker is done
+        importThreads(args, newBoard, trBoardCb);
       })
       .catch(function(err) {
         if (verbose) {
@@ -139,7 +97,6 @@ module.exports = function smfImport(args, topCallback) { var debug = args.debug;
   async.series(importers,
     function() {
       boardMQ.end();
-      threadMQ.end();
       if (verbose) {
         process.stdout.write('\n');
       }

@@ -20,12 +20,18 @@ var Importer = module.exports = function(options, importType, handler, callback)
     .then(function(newObject) {
       if (!self.quiet) {
         self.importCount++;
-        process.stdout.write(self.importCount+'\r');
+        console.log(self.importType + ' ' + newObject.id);
         //printStats(uIC, bIC, tIC, pIC, eIC);
       }
-      trCb();
+      if (self.handler) {
+        self.handler(args, newObject, trCb);
+      }
+      else {
+        trCb();
+      }
     })
-    .catch(function(err) {
+    .catch(function(err){
+      console.log(err);
       if (!self.quiet) {
         //eIC++;
         //printStats(uIC, bIC, tIC, pIC, eIC);
