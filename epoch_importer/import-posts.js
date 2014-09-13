@@ -1,6 +1,5 @@
 var path = require('path');
 module.exports = function(args, newThread, callback) {
-  args.importType = 'posts';
   var oldThreadId = newThread.smf.ID_TOPIC;
   var newThreadId = newThread.id;
   var epochStream = require(path.join(__dirname, '..', 'epoch_stream'));
@@ -14,7 +13,7 @@ module.exports = function(args, newThread, callback) {
     }
   });
   var Importer = require(path.join(__dirname, 'importer'));
-  var importer = new Importer(args, function() {
+  var importer = new Importer(args, 'posts', function() {
     process.stdout.write('\n');
     mQ.end();
     callback();

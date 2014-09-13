@@ -1,5 +1,4 @@
 module.exports = function(args, callback) {
-  args.importType = 'users';
   var path = require('path');
   var epochStream = require(path.join(__dirname, '..', 'epoch_stream'));
   var MysqlQuerier = require(path.join(__dirname, '..', 'mysql_querier'));
@@ -12,7 +11,7 @@ module.exports = function(args, callback) {
     }
   });
   var Importer = require(path.join(__dirname, 'importer'));
-  var importer = new Importer(args, function() {
+  var importer = new Importer(args, 'users', function() {
     process.stdout.write('\n');
     mQ.end();
     callback();
