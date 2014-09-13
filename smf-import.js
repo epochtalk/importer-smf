@@ -23,11 +23,9 @@ module.exports = function smfImport(args, topCallback) { var debug = args.debug;
   var MysqlQuerier = require(path.join(__dirname, 'mysql_querier'));
   var boardCfg;
   var threadCfg;
-  var postCfg;
-  boardCfg = threadCfg = postCfg = require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
+  boardCfg = threadCfg = require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
   boardCfg.connectionLimit = 1;
   threadCfg.connectionLimit = 10;
-  postCfg.connectionLimit = 100;
   var boardMQ = new MysqlQuerier(boardCfg, function(err) {
     if (err) {
       console.log('Board Connection Error');
@@ -37,12 +35,6 @@ module.exports = function smfImport(args, topCallback) { var debug = args.debug;
   var threadMQ = new MysqlQuerier(threadCfg, function(err) {
     if (err) {
       console.log('Thread Connection Error');
-      return topCallback(err);
-    }
-  });
-  var postMQ = new MysqlQuerier(postCfg, function(err) {
-    if (err) {
-      console.log('Post Connection Error');
       return topCallback(err);
     }
   });
@@ -71,102 +63,66 @@ module.exports = function smfImport(args, topCallback) { var debug = args.debug;
     }
   };
 
-  var asyncQueue = async.queue(function(runTask, callback) {
-    runTask(callback);
-  }, concurrency);
-
   var importUsers = require(path.join(__dirname,'epoch_importer','import-users'));
+  var importPosts = require(path.join(__dirname,'epoch_importer','import-posts'));
   var userImporter = function(asyncSeriesCb) {
     importUsers(args, asyncSeriesCb);
   };
 
   var forumImport = function(asyncSeriesCb) {
-    console.log('something');
-    asyncQueue.push(function(asyncBoardCb) {
+    var boardStream = epochStream.createBoardStream(boardMQ);
 
-      var boardStream = epochStream.createBoardStream(boardMQ);
-
-      boardStream.pipe(through2.obj(function(boardObject, enc, trBoardCb) {
-        core.boards.import(boardObject)
-        .then(function(newBoard) {
-          asyncQueue.push(function(asyncThreadCb) {
-
-            var oldBoardId = newBoard.smf.ID_BOARD;
-            var newBoardId = newBoard.id;
-            var threadStream = epochStream.createThreadStream(threadMQ, oldBoardId, newBoardId);
-            threadStream.pipe(through2.obj(function(threadObject, enc, trThreadCb) {
-              core.threads.import(threadObject)
-              .then(function(newThread) {
-                asyncQueue.push(function(asyncPostCb) {
-
-                  var oldThreadId = newThread.smf.ID_TOPIC;
-                  var newThreadId = newThread.id;
-                  var postStream = epochStream.createPostStream(postMQ, oldThreadId, newThreadId);
-
-                  postStream.pipe(through2.obj(function(postObject, enc, trPostCb) {
-                    core.posts.import(postObject)
-                    .then(function(newPost) {
-                      if (verbose) {
-                        pIC++;
-                        printStats(uIC, bIC, tIC, pIC, eIC);
-                      }
-                      trPostCb();  // Don't return.  Async will handle end.
-                    })
-                    .catch(function(err) {
-                      if (verbose) {
-                        eIC++;
-                        printStats(uIC, bIC, tIC, pIC, eIC);
-                      }
-                      if (logfile) {
-                        log.write('Post Error:\n');
-                        log.write(err.toString()+'\n');
-                      }
-                      trPostCb();
-                    });
-                  }, function() {
-                    asyncPostCb();
-                    if (verbose) {
-                      tIC++;
-                      printStats(uIC, bIC, tIC, pIC, eIC);
-                    }
-                    trThreadCb();  // Don't return.  Async will handle end.
-                  }));  // When stream is empty, worker is done
-                });
-              })
-              .catch(function(err) { // Catch core.threads.import
-                if (verbose) {
-                  eIC++;
-                  printStats(uIC, bIC, tIC, pIC, eIC);
-                }
-                if (logfile) {
-                  log.write('Thread Error:\n');
-                  log.write(err.toString()+'\n');
-                }
-                trThreadCb();
-              });
-            }, function() {
-              asyncThreadCb();
+    boardStream.pipe(through2.obj(function(boardObject, enc, trBoardCb) {
+      core.boards.import(boardObject)
+      .then(function(newBoard) {
+        var oldBoardId = newBoard.smf.ID_BOARD;
+        var newBoardId = newBoard.id;
+        var threadStream = epochStream.createThreadStream(threadMQ, oldBoardId, newBoardId);
+        threadStream.pipe(through2.obj(function(threadObject, enc, trThreadCb) {
+          core.threads.import(threadObject)
+          .then(function(newThread) {
+            importPosts(args, newThread, trThreadCb);
+            /*
+              function() {
               if (verbose) {
-                bIC++;
-                printStats(uIC, bIC, tIC, pIC, eIC);
+                tIC++;
+                printStatus(uIC, bIC, tIC, pIC, eIC);
               }
-              trBoardCb();  // Don't return.  Async will handle end.
-            }));  // When stream is empty, worker is done
+              trThreadCb();
+            });
+            */
+          })
+          .catch(function(err) { // Catch core.threads.import
+            if (verbose) {
+              eIC++;
+              printStats(uIC, bIC, tIC, pIC, eIC);
+            }
+            if (logfile) {
+              log.write('Thread Error:\n');
+              log.write(err.toString()+'\n');
+            }
+            trThreadCb();
           });
-        })
-        .catch(function(err) {
+        }, function() {
           if (verbose) {
-            eIC++;
+            bIC++;
             printStats(uIC, bIC, tIC, pIC, eIC);
           }
-          if (logfile) {
-            log.write('Board Error:\n');
-            log.write(err.toString()+'\n');
-          }
-          trBoardCb();
-        });
-      }, asyncBoardCb));  // When stream is empty, worker is done
-    }, asyncSeriesCb);
+          trBoardCb();  // Don't return.  Async will handle end.
+        }));  // When stream is empty, worker is done
+      })
+      .catch(function(err) {
+        if (verbose) {
+          eIC++;
+          printStats(uIC, bIC, tIC, pIC, eIC);
+        }
+        if (logfile) {
+          log.write('Board Error:\n');
+          log.write(err.toString()+'\n');
+        }
+        trBoardCb();
+      });
+    }, asyncSeriesCb));  // When stream is empty, worker is done
   };
   var importers = [];
   if (users) {
@@ -184,7 +140,6 @@ module.exports = function smfImport(args, topCallback) { var debug = args.debug;
     function() {
       boardMQ.end();
       threadMQ.end();
-      postMQ.end();
       if (verbose) {
         process.stdout.write('\n');
       }
