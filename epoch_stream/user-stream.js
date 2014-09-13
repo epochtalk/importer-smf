@@ -84,4 +84,4 @@ module.exports = function(mQ) {
   userStream = rowStream.pipe(tr);
 
   return userStream;
-}
+};

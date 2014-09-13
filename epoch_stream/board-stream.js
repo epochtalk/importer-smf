@@ -24,4 +24,4 @@ module.exports = function(mQ) {
   boardStream = rowStream.pipe(tr);
 
   return boardStream;
-}
+};

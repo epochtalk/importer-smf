@@ -46,4 +46,4 @@ module.exports = function(mQ, oldThreadId, newThreadId) {
   postStream = rowStreamWhere.pipe(tr);
 
   return postStream;
-}
+};

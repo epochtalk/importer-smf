@@ -56,4 +56,4 @@ module.exports = function(mQ, oldBoardId, newBoardId) {
   threadStream = rowStreamWhere.pipe(tr);
 
   return threadStream;
-}
+};
