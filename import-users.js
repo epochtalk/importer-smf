@@ -3,7 +3,6 @@ module.exports = function(args, callback) {
   var path = require('path');
   var epochStream = require(path.join(__dirname, 'epoch_stream'));
   var MysqlQuerier = require(path.join(__dirname, 'mysql_querier'));
-  var importer = require(path.join(__dirname, 'importer'));
   var mysqlConfig = require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
   mysqlConfig.connectionLimit = 1;
   var mQ = new MysqlQuerier(mysqlConfig, function(err) {
@@ -12,9 +11,12 @@ module.exports = function(args, callback) {
       return callback(err);
     }
   });
-  var userStream = epochStream.createUserStream(mQ);
-  userStream.pipe(importer(args, function() {
+  var Importer = require(path.join(__dirname, 'importer'));
+  var importer = new Importer(args, function() {
+    process.stdout.write('\n');
     mQ.end();
     callback();
-  }));  // When stream is empty, worker is done
+  });
+  var userStream = epochStream.createUserStream(mQ);
+  userStream.pipe(importer);  // When stream is empty, worker is done
 };

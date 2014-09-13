@@ -1,22 +1,18 @@
+var path = require('path');
+var through2 = require('through2');
+
 var Importer = module.exports = function(args, callback) {
-  var path = require('path');
-  var through2 = require('through2');
-  var leveldbPath= args.db;
-  var core = require('epochcore')(leveldbPath);
-  var verbose = args.verbose;
-  var userImportCount = 0;
-  var logfile = args.log;
-  if (logfile) {
-    var fs = require('fs');
-    var log = fs.createWriteStream(logfile);
-  }
-  this.importType = args.importType;
+  var leveldbPath = args.db;
+  this.core = require('epochcore')(leveldbPath);
+  this.quiet = args.quiet;
   this.importCount = 0;
+  this.importType = args.importType;
+  this.callback = callback;
   var self = this;
-  var throughImporter = through2.ctor({objectMode: true}, function(epochObject, enc, trCb) {
-    core[self.importType].import(epochObject)
+  return through2.obj(function(epochObject, enc, trCb) {
+    self.core[self.importType].import(epochObject)
     .then(function(newObject) {
-      if (verbose) {
+      if (!self.quiet) {
         self.importCount++;
         process.stdout.write(self.importCount+'\r');
         //printStats(uIC, bIC, tIC, pIC, eIC);
@@ -24,16 +20,16 @@ var Importer = module.exports = function(args, callback) {
       trCb();
     })
     .catch(function(err) {
-      if (verbose) {
+      if (!self.quiet) {
         //eIC++;
         //printStats(uIC, bIC, tIC, pIC, eIC);
       }
-      if (logfile) {
-        log.write(this.importType + ' Error:\n');
-        log.write(err.toString()+'\n');
-      }
       trCb();
     });
-  }, callback);
-  return new throughImporter();
+  }, self.callback);
 };
+
+/*
+Importer.prototype.import = function(){
+};
+*/

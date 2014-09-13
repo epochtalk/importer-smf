@@ -7,6 +7,7 @@ program
   .version(pJSON.version)
   .option('--leveldb <path>', 'Path to leveldb (default: ./epoch.db')
   .option('-v, --verbose [options]', '')
+  .option('-q, --quiet', 'Suppress output')
   .option('--color [options]', 'Color the output')
   .option('--users', 'Only import users')
   .option('--forum', 'Only import boards, threads, and posts')
@@ -20,6 +21,7 @@ var args = {
   users: program.users,
   forum: program.forum,
   log: program.log,
+  quiet: program.quiet,
   color: program.color
 };
 
