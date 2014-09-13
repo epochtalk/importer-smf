@@ -75,7 +75,7 @@ module.exports = function smfImport(args, topCallback) { var debug = args.debug;
     runTask(callback);
   }, concurrency);
 
-  var importUsers = require('./import-users');
+  var importUsers = require(path.join(__dirname,'epoch_importer','import-users'));
   var userImporter = function(asyncSeriesCb) {
     importUsers(args, asyncSeriesCb);
   };
