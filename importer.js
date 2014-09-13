@@ -1,4 +1,3 @@
-var path = require('path');
 var through2 = require('through2');
 
 var Importer = module.exports = function(args, callback) {
