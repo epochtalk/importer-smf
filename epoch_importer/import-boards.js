@@ -29,7 +29,7 @@ module.exports = function(options, handler, callback) {
     core.boards.import(boardObject)
     .then(function(newBoard) {
       if (handler) {
-        handler(null, boardObject, trCb);
+        handler(null, newBoard, trCb);
       }
       else {
         trCb();
