@@ -4,6 +4,11 @@ module.exports = function smfImport(args, topCallback) {
   var verbose = args.verbose;
   var users = args.users;
   var forum = args.forum;
+  var log = args.log;
+  if (log) {
+    var fs = require('fs');
+    var logfile = fs.createWriteStream(log);
+  }
 
   var path = require('path');
   var epochImport = require(path.join(__dirname,'epoch_import'));
@@ -37,17 +42,21 @@ module.exports = function smfImport(args, topCallback) {
 
 
   if (users) {
-    epochImport.users(options, function(err, newUser, callback){
+    epochImport.users(options, function(err, newUser, userCb) {
+      if(err) {
+        count.errs++;
+        if (log) {
+          logfile.write('User error:\n');
+          logfile.write(err.toString()+'\n');
+        }
+      }
+      else {
+        count.users++;
+      }
       if (!quiet) {
-        if(err) {
-          count.errs++;
-        }
-        else {
-          count.users++;
-        }
         printStats(count);
       }
-      return callback();
+      return userCb();
     },
     function() {
       if (!quiet) {
@@ -56,17 +65,54 @@ module.exports = function smfImport(args, topCallback) {
     });
   }
   else if (forum) {
-    epochImport.boards(options, function(err, newBoard, callback){
+    epochImport.boards(options, function(err, newBoard, boardCb) {
+      if(err) {
+        count.errs++;
+        if (log) {
+          logfile.write('Board error:\n');
+          logfile.write(err.toString()+'\n');
+        }
+        return boardCb();
+      }
+      else {
+        count.boards++;
+        epochImport.threads(options, newBoard, function(err, newThread, threadCb) {
+          if(err) {
+            count.errs++;
+            if (log) {
+              logfile.write('Thread error:\n');
+              logfile.write(err.toString()+'\n');
+            }
+            return threadCb();
+          }
+          else {
+            count.threads++;
+            epochImport.posts(options, newThread, function(err, newPost, postCb) {
+              if(err) {
+                count.errs++;
+                if (log) {
+                  logfile.write('Post error:\n');
+                  logfile.write(err.toString()+'\n');
+                }
+              }
+              else {
+                count.posts++;
+              }
+              if (!quiet) {
+                printStats(count);
+              }
+              return postCb();
+            }, threadCb);
+          }
+          if (!quiet) {
+            printStats(count);
+          }
+        }, boardCb);
+
+      }
       if (!quiet) {
-        if(err) {
-          count.errs++;
-        }
-        else {
-          count.boards++;
-        }
         printStats(count);
       }
-      return callback();
     },
     function() {
       if (!quiet) {
