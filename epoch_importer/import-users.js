@@ -8,7 +8,7 @@ module.exports = function(options, handler, callback) {
   }
   var callback = args.pop();
   var handler = args.pop();
-  var dbPath = options.db();
+  var dbPath = options.db;
 
   // TODO: move || to top level
   var mysqlConfig = options.mQConfig() || require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
