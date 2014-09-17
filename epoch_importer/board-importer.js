@@ -1,9 +1,22 @@
 var path = require('path');
-module.exports = function(args, callback) {
-  var importThreads = require(path.join(__dirname, 'import-threads'));
-  var epochStream = require(path.join(__dirname, '..', 'epoch_stream'));
+var through2 = require('through2');
+
+module.exports = function(options, handler, callback) {
+  var args = [];
+  for (var i = 0; i < arguments.length; i++) {
+    args.push(arguments[i]);
+  }
+  var options = args.shift();
+  var callback = args.pop();
+  var handler = args.pop();
+  var dbPath = options.db();
+  // TODO: move || to top level
+  var mysqlConfig = options.mQConfig() || require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
+
+  var core = require('epochcore')(dbPath);
   var MysqlQuerier = require(path.join(__dirname, '..', 'mysql_querier'));
-  var mysqlConfig = require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
+  var importCount = 0;
+  // TODO: remove this?
   mysqlConfig.connectionLimit = 5;
   var mQ = new MysqlQuerier(mysqlConfig, function(err) {
     if (err) {
@@ -11,12 +24,25 @@ module.exports = function(args, callback) {
       return callback(err);
     }
   });
-  var Importer = require(path.join(__dirname, 'importer'));
-  var importer = new Importer(args, 'boards', importThreads, function() {
-    process.stdout.write('\n');
-    mQ.end();
-    callback();
-  });
   var boardStream = epochStream.createBoardStream(mQ);
-  boardStream.pipe(importer);  // When stream is empty, worker is done
+
+  boardStream.pipe(through2.obj(function(boardObject, enc, trCb) {
+    core.boards.import(boardObject)
+    .then(function(newBoard) {
+      if (handler) {
+        handler(null, boardObject, trCb);
+      }
+      else {
+        trCb();
+      }
+    })
+    .catch(function(err){
+      if (handler) {
+        handler(err, null, trCb);
+      }
+      else {
+        trCb();
+      }
+    });
+  }, callback));
 };
