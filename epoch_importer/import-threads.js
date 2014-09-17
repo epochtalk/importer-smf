@@ -8,7 +8,7 @@ module.exports = function(options, newBoard, handler, callback) {
   }
   var callback = args.pop();
   var handler = args.pop();
-  var dbPath = options.db();
+  var dbPath = options.db;
   var oldBoardId = newBoard.smf.ID_BOARD;
   var newBoardId = newBoard.id;
 
