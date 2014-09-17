@@ -1,9 +1,9 @@
 var path = require('path');
-var epochImporter = {};
+var epochImport = {};
 
-epochImporter.importUsers = require(path.join(__dirname, 'import-users'));
-epochImporter.importBoards = require(path.join(__dirname, 'import-boards'));
-epochImporter.importThreads = require(path.join(__dirname, 'import-threads'));
-epochImporter.importPosts = require(path.join(__dirname, 'import-posts'));
+epochImport.users = require(path.join(__dirname, 'import-users'));
+epochImport.boards = require(path.join(__dirname, 'import-boards'));
+epochImport.threads = require(path.join(__dirname, 'import-threads'));
+epochImport.posts = require(path.join(__dirname, 'import-posts'));
 
-module.exports = epochImporter;
+module.exports = epochImport;
