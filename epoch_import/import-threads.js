@@ -19,7 +19,7 @@ module.exports = function(options, newBoard, handler, callback) {
       return callback(err);
     }
   });
-  var threadStream = epochStream.threadStream(mQ, oldBoardId, newBoardId);
+  var threadStream = epochStream.createThreadStream(mQ, oldBoardId, newBoardId);
   threadStream.pipe(through2.obj(function(threadObject, enc, trCb) {
     core.threads.import(threadObject)
     .then(function(newThread) {
