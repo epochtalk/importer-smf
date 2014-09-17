@@ -42,5 +42,8 @@ module.exports = function(options, handler, callback) {
         trCb();
       }
     });
-  }, callback));
+  }, function() {
+    mQ.end();
+    callback();
+  }));
 };

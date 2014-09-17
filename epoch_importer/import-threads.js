@@ -44,5 +44,8 @@ module.exports = function(options, newBoard, handler, callback) {
         trCb();
       }
     });
-  }, callback));
+  }, function() {
+    mQ.end();
+    callback();
+  }));
 };
