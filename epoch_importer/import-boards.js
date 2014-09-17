@@ -16,6 +16,7 @@ module.exports = function(options, handler, callback) {
   mysqlConfig.connectionLimit = 5;
 
   var core = require('epochcore')(dbPath);
+  var epochStream = require(path.join(__dirname, '..', 'epoch_stream'));
   var MysqlQuerier = require(path.join(__dirname, '..', 'mysql_querier'));
   var importCount = 0;
   var mQ = new MysqlQuerier(mysqlConfig, function(err) {
