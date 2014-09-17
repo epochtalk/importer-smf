@@ -56,11 +56,22 @@ module.exports = function smfImport(args, topCallback) {
     });
   }
   else if (forum) {
-    importBoards(args, function(){
-      if (verbose) {
+    epochImport.boards(options, function(err, newBoard, callback){
+      if (!quiet) {
+        if(err) {
+          count.errs++;
+        }
+        else {
+          count.boards++;
+        }
+        printStats(count);
+      }
+      return callback();
+    },
+    function() {
+      if (!quiet) {
         process.stdout.write('\n');
       }
-      topCallback();
     });
   }
   else {
