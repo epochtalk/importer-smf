@@ -9,6 +9,7 @@ module.exports = function(options, handler, callback) {
   var callback = args.pop();
   var handler = args.pop();
   var dbPath = options.db();
+
   // TODO: move || to top level
   var mysqlConfig = options.mQConfig() || require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
 
@@ -24,7 +25,6 @@ module.exports = function(options, handler, callback) {
     }
   });
   var boardStream = epochStream.createBoardStream(mQ);
-
   boardStream.pipe(through2.obj(function(boardObject, enc, trCb) {
     core.boards.import(boardObject)
     .then(function(newBoard) {
