@@ -12,12 +12,12 @@ module.exports = function(options, handler, callback) {
 
   // TODO: move || to top level
   var mysqlConfig = options.mQConfig() || require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
+  // TODO: remove this?
+  mysqlConfig.connectionLimit = 5;
 
   var core = require('epochcore')(dbPath);
   var MysqlQuerier = require(path.join(__dirname, '..', 'mysql_querier'));
   var importCount = 0;
-  // TODO: remove this?
-  mysqlConfig.connectionLimit = 5;
   var mQ = new MysqlQuerier(mysqlConfig, function(err) {
     if (err) {
       console.log('Board Connection Error');
