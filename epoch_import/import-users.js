@@ -13,7 +13,6 @@ module.exports = function(options, handler, callback) {
   var MysqlQuerier = require(path.join(__dirname, '..', 'mysql_querier'));
   var mQ = new MysqlQuerier(mysqlConfig, function(err) {
     if (err) {
-      console.log('User Connection Error');
       return callback(err);
     }
   });

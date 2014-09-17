@@ -15,7 +15,6 @@ module.exports = function(options, newBoard, handler, callback) {
   var MysqlQuerier = require(path.join(__dirname, '..', 'mysql_querier'));
   var mQ = new MysqlQuerier(mysqlConfig, function(err) {
     if (err) {
-      console.log('Thread Connection Error');
       return callback(err);
     }
   });
