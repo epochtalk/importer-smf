@@ -2,12 +2,6 @@ var path = require('path');
 var through2 = require('through2');
 
 module.exports = function(options, handler, callback) {
-  var args = [];
-  for (var i = 0; i < arguments.length; i++) {
-    args.push(arguments[i]);
-  }
-  var callback = args.pop();
-  var handler = args.pop();
   var dbPath = options.db;
 
   var mysqlConfig = options.mQConfig;
