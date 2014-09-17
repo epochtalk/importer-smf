@@ -10,8 +10,7 @@ module.exports = function(options, handler, callback) {
   var handler = args.pop();
   var dbPath = options.db;
 
-  // TODO: move || to top level
-  var mysqlConfig = options.mQConfig() || require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
+  var mysqlConfig = options.mQConfig;
   // TODO: remove this?
   mysqlConfig.connectionLimit = 1;
 
