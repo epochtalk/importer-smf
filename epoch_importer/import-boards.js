@@ -6,7 +6,6 @@ module.exports = function(options, handler, callback) {
   for (var i = 0; i < arguments.length; i++) {
     args.push(arguments[i]);
   }
-  var options = args.shift();
   var callback = args.pop();
   var handler = args.pop();
   var dbPath = options.db();
