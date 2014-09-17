@@ -6,7 +6,7 @@ module.exports = function smfImport(args, topCallback) {
   var forum = args.forum;
 
   var path = require('path');
-  var epochImporter = require(path.join(__dirname,'epoch_importer'));
+  var epochImport = require(path.join(__dirname,'epoch_import'));
   var rw = require('rainbow-word');
   var rainbow = rw.pattern({
     style: 'bold',
@@ -30,14 +30,14 @@ module.exports = function smfImport(args, topCallback) {
     errs: 0
   };
 
-  var importOptions = {
+  var options = {
     dbPath: args.db,
     mQConfig: require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'))
   };
 
 
   if (users) {
-    epochImporter.importUsers(importOptions, function(err, newUser, callback){
+    epochImport.users(options, function(err, newUser, callback){
       if (!quiet) {
         if(err) {
           count.errs++;
