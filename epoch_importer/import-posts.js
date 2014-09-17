@@ -8,7 +8,7 @@ module.exports = function(options, newThread, handler, callback) {
   }
   var callback = args.pop();
   var handler = args.pop();
-  var dbPath = options.db();
+  var dbPath = options.db;
   var oldThreadId = newThread.smf.ID_TOPIC;
   var newThreadId = newThread.id;
 
