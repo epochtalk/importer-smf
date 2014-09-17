@@ -12,8 +12,7 @@ module.exports = function(options, newThread, handler, callback) {
   var oldThreadId = newThread.smf.ID_TOPIC;
   var newThreadId = newThread.id;
 
-  // TODO: move || to top level
-  var mysqlConfig = options.mQConfig() || require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
+  var mysqlConfig = options.mQConfig;
   // TODO: remove this?
   mysqlConfig.connectionLimit = 10;
 
