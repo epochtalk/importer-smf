@@ -12,8 +12,7 @@ module.exports = function(options, newBoard, handler, callback) {
   var oldBoardId = newBoard.smf.ID_BOARD;
   var newBoardId = newBoard.id;
 
-  // TODO: move || to top level
-  var mysqlConfig = options.mQConfig() || require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'));
+  var mysqlConfig = options.mQConfig;
   // TODO: remove this?
   mysqlConfig.connectionLimit = 5;
 
