@@ -1,5 +1,6 @@
 module.exports = function smfImport(args, topCallback) {
   var debug = args.debug;
+  var quiet = args.quiet;
   var verbose = args.verbose;
   var users = args.users;
   var forum = args.forum;
