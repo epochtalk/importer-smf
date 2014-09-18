@@ -8,7 +8,7 @@ module.exports = function(options, newBoard, handler, callback) {
 
   var mysqlConfig = options.mQConfig;
   // TODO: remove this?
-  mysqlConfig.connectionLimit = 5;
+  mysqlConfig.connectionLimit = 2;
 
   var core = require('epochcore')(dbPath);
   var epochStream = require(path.join(__dirname, '..', 'epoch_stream'));
