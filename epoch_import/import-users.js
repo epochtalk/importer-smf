@@ -16,6 +16,20 @@ module.exports = function(options, handler, callback) {
       return callback(err);
     }
   });
+
+  // "deleted" user
+  core.users.import({
+    username: 'deleted',
+    email: 'deleted',
+    smf: {
+      ID_MEMBER: -1
+    }
+  })
+  .catch(function(err) {
+    console.log('"deleted" user error:');
+    console.log(err);
+  });
+
   var userStream = epochStream.createUserStream(mQ);
   userStream.pipe(through2.obj(function(userObject, enc, trCb) {
     core.users.import(userObject)

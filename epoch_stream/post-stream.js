@@ -35,6 +35,9 @@ module.exports = function(mQ, oldThreadId, newThreadId) {
 
   var rowStreamWhere = mQ.createRowStreamWhere(table, { ID_TOPIC : oldThreadId}, columns);
   var tr = through2.obj(function(row, enc, cb) {
+    if (row.ID_MEMBER === 0) {
+      row.ID_MEMBER = -1;
+    }
     var epochCollection = new EpochCollection();
     epochCollection.map(row, tableMapSafe, {validate: true});
     epochCollection.mapTime(row, timeMapSafe, {validate: true});
