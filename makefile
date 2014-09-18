@@ -24,7 +24,7 @@ clean:
 	rm -rf epoch.db log.txt forumlog.txt
 
 clean_users:
-	rm -rf user.db userlog.txt
+	rm -rf users.db userlog.txt
 
 clean_other:
 	rm -rf other.db other_log.txt

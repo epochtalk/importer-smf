@@ -16,7 +16,7 @@ program
 
 var imp = require(path.join(__dirname, 'smf-import'));
 var args = {
-  db: program.leveldb,
+  db: program.leveldb || path.join(process.env.PWD, 'epoch.db'),
   verbose: program.verbose,
   users: program.users,
   forum: program.forum,
