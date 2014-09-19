@@ -44,7 +44,7 @@ module.exports = function smfImport(args, topCallback) {
     if(err) {
       count.errs++;
       if (log) {
-        logfile.write('User error:\n');
+        logfile.write('User error: ' + newUser.smf.ID_MEMBER + '\n');
         logfile.write(err.toString()+'\n');
       }
     }
@@ -64,7 +64,7 @@ module.exports = function smfImport(args, topCallback) {
       if(err) {
         count.errs++;
         if (log) {
-          logfile.write('Board error:\n');
+          logfile.write('Board error: ' + newBoard.smf.ID_BOARD + '\n');
           logfile.write(err.toString()+'\n');
         }
         return boardCb();
@@ -78,7 +78,7 @@ module.exports = function smfImport(args, topCallback) {
           if(err) {
             count.errs++;
             if (log) {
-              logfile.write('Thread error:\n');
+              logfile.write('Thread error: ' + newThread.smf.ID_TOPIC + '\n');
               logfile.write(err.toString()+'\n');
             }
             return threadCb();
@@ -92,7 +92,7 @@ module.exports = function smfImport(args, topCallback) {
               if(err) {
                 count.errs++;
                 if (log) {
-                  logfile.write('Post error:\n');
+                  logfile.write('Post error: ' + newPost.smf.ID_MSG + '\n');
                   logfile.write(err.toString()+'\n');
                 }
               }
