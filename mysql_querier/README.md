@@ -80,28 +80,54 @@ mQ.getColumns(err, table, callback(err, tables));
 Streaming rows
 --------------
 
+Basic operation
 ~~~~
-...
+mQ.createRowStream(table[, options]);
+~~~
 
-// table is a String, the name of the table
-// the input is escaped
-var rowStream = mQ.createRowStream(err, table);
-rowStream.on('error', function {
-  // do something with error
-})
-.on('result', function(row) {
-  // do something with result
-});
+###Arguments
+
+####table
+
+A String, indicating which table to query
+
+####options
+
+`options.columns`
+
+Either a String or an array of strings which
+indicate the columns to be queried.
+
+`options.where`
+
+An object of `key: value` pairs.  Parsed by mysql as
+`WHERE key = value, key = value, ...` for each entry
+in the `where` object.
+
+`options.orderBy`
+
+Either a String or an array of string which indicate
+the columns by which to order by and whether they are
+in ascending (`'column ASC'`) or descending (`'column DESC'`)
+order.
+
+###Examples
+
 ~~~~
+var options = {};
+options.columns = 'test_column';
+// OR
+options.columns = ['test_column', 'other_test_column', ...];
+options.where = {
+  field: value,
+  other_field: other_value,
+  ...
+};
+options.orderBy = 'test_column';
+options.orderBy = 'test_column ASC';
+options.orderBy = 'test_column DESC';
+// OR
+options.orderBy = ['test_column', 'other_test_column ASC', ...];
 
-Streaming rows with WHERE
--------------------------
-
-~~~~
-...
-
-var obj = { field : value };
-
-var rowStreamWhere = mysql-querier.createRowStreamWhere(err, table, obj);
-// SELECT * FROM 'table' WHERE 'field' = value;
+var rowStream = mQ.createRowStream(table, options);
 ~~~~
