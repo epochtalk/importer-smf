@@ -33,7 +33,12 @@ module.exports = function(mQ, oldThreadId, newThreadId) {
     'smileysEnabled'
   ];
 
-  var rowStreamWhere = mQ.createRowStreamWhere(table, { ID_TOPIC : oldThreadId}, columns);
+  var options = {};
+  options.columns = columns;
+  options.where = {ID_TOPIC : oldThreadId};
+  options.orderBy = 'ID_MSG';
+
+  var rowStream = mQ.createRowStream(table, options);
   var tr = through2.obj(function(row, enc, cb) {
     if (row.ID_MEMBER === 0) {
       row.ID_MEMBER = -1;
@@ -46,7 +51,7 @@ module.exports = function(mQ, oldThreadId, newThreadId) {
     this.push(epochCollection.collection);
     return cb();
   });
-  postStream = rowStreamWhere.pipe(tr);
+  postStream = rowStream.pipe(tr);
 
   return postStream;
 };

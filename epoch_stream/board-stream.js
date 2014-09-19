@@ -13,7 +13,10 @@ module.exports = function(mQ) {
     'ID_BOARD'
   ];
 
-  var rowStream = mQ.createRowStream(table);
+  var options = {};
+  options.orderBy = 'ID_BOARD';
+
+  var rowStream = mQ.createRowStream(table, options);
   var tr = through2.obj(function(row, enc, cb) {
     var epochCollection = new EpochCollection();
     epochCollection.map(row, tableMapSafe, {validate: true});

@@ -73,7 +73,11 @@ module.exports = function(mQ) {
     'emailAddress'
   ];
 
-  var rowStream = mQ.createRowStream(table, columns);
+  var options = {};
+  options.columns = columns;
+  options.orderBy = 'ID_MEMBER';
+
+  var rowStream = mQ.createRowStream(table, options);
   var tr = through2.obj(function(row, enc, cb) {
     var epochCollection = new EpochCollection();
     epochCollection.map(row, tableMapSafe, {validate: true});

@@ -30,7 +30,11 @@ module.exports = function(mQ, oldBoardId, newBoardId) {
     'smileysEnabled'
   ];
 
-  var rowStreamWhere = mQ.createRowStreamWhere(table, { ID_BOARD : oldBoardId});
+  var options = {};
+  options.where = {ID_BOARD : oldBoardId};
+  options.orderBy = 'ID_TOPIC';
+
+  var rowStream = mQ.createRowStream(table, options);
   var tr = through2.obj(function(row, enc, cb) {
     var epochCollection = new EpochCollection();
     mQ.getRowsWhereColumn('smf_messages', { ID_MSG : row.ID_FIRST_MSG },
@@ -53,7 +57,7 @@ module.exports = function(mQ, oldBoardId, newBoardId) {
       return cb();
     });
   });
-  threadStream = rowStreamWhere.pipe(tr);
+  threadStream = rowStream.pipe(tr);
 
   return threadStream;
 };
