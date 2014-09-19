@@ -1,7 +1,6 @@
 module.exports = function smfImport(args, topCallback) {
   var debug = args.debug;
   var quiet = args.quiet;
-  var verbose = args.verbose;
   var users = args.users;
   var forum = args.forum;
   var log = args.log;
@@ -50,6 +49,9 @@ module.exports = function smfImport(args, topCallback) {
       }
     }
     else {
+      if (debug) {
+        console.log('User: ' + newUser.smf.ID_MEMBER);
+      }
       count.users++;
     }
     if (!quiet) {
@@ -68,6 +70,9 @@ module.exports = function smfImport(args, topCallback) {
         return boardCb();
       }
       else {
+        if (debug) {
+          console.log('Board: ' + newBoard.smf.ID_BOARD);
+        }
         count.boards++;
         epochImport.threads(options, newBoard, function(err, newThread, threadCb) {
           if(err) {
@@ -79,6 +84,9 @@ module.exports = function smfImport(args, topCallback) {
             return threadCb();
           }
           else {
+            if (debug) {
+              console.log('Thread: ' + newThread.smf.ID_TOPIC);
+            }
             count.threads++;
             epochImport.posts(options, newThread, function(err, newPost, postCb) {
               if(err) {
@@ -89,6 +97,9 @@ module.exports = function smfImport(args, topCallback) {
                 }
               }
               else {
+                if (debug) {
+                  console.log('Post: ' + newPost.smf.ID_MSG);
+                }
                 count.posts++;
               }
               if (!quiet) {
