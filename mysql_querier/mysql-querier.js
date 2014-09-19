@@ -39,20 +39,40 @@ MysqlQuerier.prototype.getRowsWhereColumn = function(table, obj, columns, callba
     return callback(err, rows);
   });
 };
-MysqlQuerier.prototype.createRowStream = function(table, columns) {
-  if (Array.isArray(columns)) {
-    return this.pool.query('SELECT ?? FROM ??', [columns, table]).stream();
-  }
-  else {
+MysqlQuerier.prototype.createRowStream = function(table, options) {
+  if (!options) {
     return this.pool.query('SELECT * FROM ??', table).stream();
   }
-};
-MysqlQuerier.prototype.createRowStreamWhere = function(table, obj, columns) {
-  if (Array.isArray(columns)) {
-    return this.pool.query('SELECT ?? FROM ?? WHERE ?', [columns, table, obj]).stream();
-  }
   else {
-    return this.pool.query('SELECT * FROM ?? WHERE ?', [table, obj]).stream();
+    var escapeValues = [];
+    var query = 'SELECT ';
+
+    // Specific columns in an array
+    if (options.columns) {
+      query += '?? ';
+      escapeValues.push(options.columns);
+    }
+    else {
+      query += '* ';
+    }
+
+    // The table
+    query += 'FROM ?? ';
+    escapeValues.push(table);
+
+    // Where key = value for each object entry
+    if (options.where) {
+      query += 'WHERE ? ';
+      escapeValues.push(options.where);
+    }
+
+    // Orders by columns in an array
+    // ["column ASC", "column DESC", ...]
+    if (options.orderBy) {
+      query += 'ORDER BY ?? ';
+      escapeValues.push(options.orderBy);
+    }
+    return this.pool.query(query, escapeValues).stream();
   }
 };
 MysqlQuerier.prototype.end = function(callback) {
