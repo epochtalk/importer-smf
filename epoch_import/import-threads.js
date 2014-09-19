@@ -31,7 +31,7 @@ module.exports = function(options, newBoard, handler, callback) {
     })
     .catch(function(err){
       if (handler) {
-        handler(err, null, trCb);
+        handler(err, threadObject, trCb);
       }
       else {
         trCb();

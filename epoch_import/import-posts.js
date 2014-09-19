@@ -31,7 +31,7 @@ module.exports = function(options, newThread, handler, callback) {
     })
     .catch(function(err){
       if (handler) {
-        handler(err, null, trCb);
+        handler(err, postObject, trCb);
       }
       else {
         trCb();

@@ -29,7 +29,7 @@ module.exports = function(options, handler, callback) {
     })
     .catch(function(err){
       if (handler) {
-        handler(err, null, trCb);
+        handler(err, boardObject, trCb);
       }
       else {
         trCb();
