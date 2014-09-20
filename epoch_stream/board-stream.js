@@ -10,6 +10,7 @@ module.exports = function(mQ) {
   };
 
   var smfMap = [
+    'ID_PARENT',
     'ID_BOARD'
   ];
 
