@@ -51,7 +51,7 @@ module.exports = function(mQ, oldThreadId, newThreadId) {
     this.push(epochCollection.collection);
     return cb();
   });
-  postStream = rowStream.pipe(tr);
+  var postStream = rowStream.pipe(tr);
 
   return postStream;
 };

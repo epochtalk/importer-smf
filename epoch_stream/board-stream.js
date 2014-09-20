@@ -25,7 +25,7 @@ module.exports = function(mQ) {
     this.push(epochCollection.collection);
     return cb();
   });
-  boardStream = rowStream.pipe(tr);
+  var boardStream = rowStream.pipe(tr);
 
   return boardStream;
 };

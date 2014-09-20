@@ -57,7 +57,7 @@ module.exports = function(mQ, oldBoardId, newBoardId) {
       return cb();
     });
   });
-  threadStream = rowStream.pipe(tr);
+  var threadStream = rowStream.pipe(tr);
 
   return threadStream;
 };
