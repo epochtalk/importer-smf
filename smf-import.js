@@ -35,7 +35,6 @@ module.exports = function smfImport(args, topCallback) {
   };
 
   var options = {
-    db: args.db,
     mQConfig: require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'))
   };
 
