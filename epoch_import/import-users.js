@@ -1,14 +1,12 @@
 var path = require('path');
 var through2 = require('through2');
+var db = require(path.join(__dirname, '..', 'db'));
 
 module.exports = function(options, handler, callback) {
-  var dbPath = options.db;
-
   var mysqlConfig = options.mQConfig;
   // TODO: remove this?
   mysqlConfig.connectionLimit = 1;
 
-  var core = require('epochcore')(dbPath);
   var epochStream = require(path.join(__dirname, '..', 'epoch_stream'));
   var MysqlQuerier = require(path.join(__dirname, '..', 'mysql_querier'));
   var mQ = new MysqlQuerier(mysqlConfig, function(err) {
@@ -18,7 +16,7 @@ module.exports = function(options, handler, callback) {
   });
 
   // "deleted" user
-  core.users.import({
+  db.users.import({
     username: 'deleted',
     email: 'deleted',
     smf: {
@@ -32,7 +30,7 @@ module.exports = function(options, handler, callback) {
 
   var userStream = epochStream.createUserStream(mQ);
   userStream.pipe(through2.obj(function(userObject, enc, trCb) {
-    core.users.import(userObject)
+    db.users.import(userObject)
     .then(function(newUser) {
       if (handler) {
         handler(null, newUser, trCb);

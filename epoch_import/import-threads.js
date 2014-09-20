@@ -1,8 +1,8 @@
 var path = require('path');
 var through2 = require('through2');
+var db = require(path.join(__dirname, '..', 'db'));
 
 module.exports = function(options, newBoard, handler, callback) {
-  var dbPath = options.db;
   var oldBoardId = newBoard.smf.ID_BOARD;
   var newBoardId = newBoard.id;
 
@@ -10,7 +10,6 @@ module.exports = function(options, newBoard, handler, callback) {
   // TODO: remove this?
   mysqlConfig.connectionLimit = 2;
 
-  var core = require('epochcore')(dbPath);
   var epochStream = require(path.join(__dirname, '..', 'epoch_stream'));
   var MysqlQuerier = require(path.join(__dirname, '..', 'mysql_querier'));
   var mQ = new MysqlQuerier(mysqlConfig, function(err) {
@@ -20,7 +19,7 @@ module.exports = function(options, newBoard, handler, callback) {
   });
   var threadStream = epochStream.createThreadStream(mQ, oldBoardId, newBoardId);
   threadStream.pipe(through2.obj(function(threadObject, enc, trCb) {
-    core.threads.import(threadObject)
+    db.threads.import(threadObject)
     .then(function(newThread) {
       if (handler) {
         handler(null, newThread, trCb);
