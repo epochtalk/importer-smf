@@ -85,7 +85,7 @@ module.exports = function(mQ) {
     this.push(epochCollection.collection);
     return cb();
   });
-  userStream = rowStream.pipe(tr);
+  var userStream = rowStream.pipe(tr);
 
   return userStream;
 };
