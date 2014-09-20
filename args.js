@@ -15,4 +15,3 @@ module.exports = {
   log: program.log,
   quiet: program.quiet
 };
-
