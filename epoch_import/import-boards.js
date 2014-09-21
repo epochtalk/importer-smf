@@ -19,9 +19,15 @@ module.exports = function(handler, callback) {
     if (boardObject.smf.childLevel) {
       boardObject.smf.ID_CAT = 0;
     }
+    var childLevel = boardObject.smf.childLevel;
+    var ID_CAT = boardObject.smf.ID_CAT;
+    delete boardObject.smf.childLevel;
+    delete boardObject.smf.ID_CAT;
     db.boards.import(boardObject)
     .then(function(newBoard) {
       if (handler) {
+        newBoard.smf.childLevel = childLevel;
+        newBoard.smf.ID_CAT = ID_CAT;
         handler(null, newBoard, trCb);
       }
       else {
