@@ -8,6 +8,9 @@ module.exports = function(mQ) {
     memberName : 'username',
     emailAddress : 'email'
   };
+  var timeMapSafe = {
+    dateRegistered : 'created_at'
+  };
   var smfMap = [
     'ID_MEMBER'
   ];
@@ -81,6 +84,7 @@ module.exports = function(mQ) {
   var tr = through2.obj(function(row, enc, cb) {
     var epochCollection = new EpochCollection();
     epochCollection.map(row, tableMapSafe, {validate: true});
+    epochCollection.mapTime(row, timeMapSafe, {validate: true});
     epochCollection.subMap(row, smfMap, {key: 'smf'});
     this.push(epochCollection.collection);
     return cb();
