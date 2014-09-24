@@ -4,6 +4,9 @@ var through2 = require('through2');
 
 module.exports = function(mQ, oldBoardId, newBoardId) {
   var table = 'smf_topics';
+  var tableMapSafe = {
+    numViews : 'view_count',
+  };
   var timeMapSafe = {
     modifiedTime: 'updated_at',
     posterTime: 'created_at'
@@ -45,8 +48,9 @@ module.exports = function(mQ, oldBoardId, newBoardId) {
       else if(firstPostQuery) {
         if (firstPostQuery.length > 0) {
           var firstPost = firstPostQuery[0];
-          epochCollection.mapTime(firstPost, timeMapSafe, {validate: 'true'});
+          epochCollection.mapTime(firstPost, timeMapSafe, {validate: true});
         }
+        epochCollection.map(row, tableMapSafe, {validate: true});
         epochCollection.subMap(row, smfMap, {key: 'smf'});
         epochCollection.add('board_id', newBoardId);
         tr.push(epochCollection.collection);
