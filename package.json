@@ -4,6 +4,9 @@
   "repository": {
     "type": "git"
   },
+  "scripts": {
+    "import": "rm -rf epoch.db && ./epoch-smf-import.sh && ./finished.sh"
+  },
   "bin": {
     "epoch-smf-import": "epoch-smf-import.sh"
   },
