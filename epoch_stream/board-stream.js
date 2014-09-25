@@ -10,6 +10,8 @@ module.exports = function(mQ) {
   };
 
   var smfMap = [
+    'childLevel',
+    'ID_CAT',
     'ID_PARENT',
     'ID_BOARD'
   ];

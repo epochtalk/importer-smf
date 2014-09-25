@@ -16,6 +16,9 @@ module.exports = function(handler, callback) {
   });
   var boardStream = epochStream.createBoardStream(mQ);
   boardStream.pipe(through2.obj(function(boardObject, enc, trCb) {
+    if (boardObject.smf.childLevel) {
+      boardObject.smf.ID_CAT = 0;
+    }
     db.boards.import(boardObject)
     .then(function(newBoard) {
       if (handler) {
