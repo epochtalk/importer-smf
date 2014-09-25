@@ -1,10 +1,10 @@
 all: clean
-	time node --max-old-space-size=8192 index --log log.txt
+	time ./epoch-smf-import.sh
 	./finished.sh
 
 debug: clean
-	time node --max-old-space-size=8192 index --log log.txt --quiet --debug
+	time ./epoch-smf-import.sh --quiet --debug
 	./finished.sh
 
 clean:
-	rm -rf epoch.db log.txt
+	rm -rf epoch.db
