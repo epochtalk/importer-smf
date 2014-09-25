@@ -34,12 +34,8 @@ module.exports = function smfImport(args, topCallback) {
     errs: 0
   };
 
-  var options = {
-    mQConfig: require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'))
-  };
 
-
-  epochImport.users(options, function(err, newUser, userCb) {
+  epochImport.users(function(err, newUser, userCb) {
     if(err) {
       count.errs++;
       if (log) {
@@ -59,7 +55,7 @@ module.exports = function smfImport(args, topCallback) {
     return userCb();
   },
   function() {
-    epochImport.boards(options, function(err, newBoard, boardCb) {
+    epochImport.boards(function(err, newBoard, boardCb) {
       if(err) {
         count.errs++;
         if (log) {
@@ -73,7 +69,7 @@ module.exports = function smfImport(args, topCallback) {
           console.log('Board: ' + newBoard.smf.ID_BOARD);
         }
         count.boards++;
-        epochImport.threads(options, newBoard, function(err, newThread, threadCb) {
+        epochImport.threads(newBoard, function(err, newThread, threadCb) {
           if(err) {
             count.errs++;
             if (log) {
@@ -87,7 +83,7 @@ module.exports = function smfImport(args, topCallback) {
               console.log('Thread: ' + newThread.smf.ID_TOPIC);
             }
             count.threads++;
-            epochImport.posts(options, newThread, function(err, newPost, postCb) {
+            epochImport.posts(newThread, function(err, newPost, postCb) {
               if(err) {
                 count.errs++;
                 if (log) {

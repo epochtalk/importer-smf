@@ -1,12 +1,13 @@
 var path = require('path');
 var through2 = require('through2');
+var args = require(path.join(__dirname, '..', 'args'));
 var db = require(path.join(__dirname, '..', 'db'));
 
-module.exports = function(options, newBoard, handler, callback) {
+module.exports = function(newBoard, handler, callback) {
   var oldBoardId = newBoard.smf.ID_BOARD;
   var newBoardId = newBoard.id;
 
-  var mysqlConfig = options.mQConfig;
+  var mysqlConfig = args.mysqlConfig;
   mysqlConfig.connectionLimit = 2;
 
   var epochStream = require(path.join(__dirname, '..', 'epoch_stream'));

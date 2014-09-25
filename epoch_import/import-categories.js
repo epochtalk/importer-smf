@@ -1,8 +1,9 @@
 var path = require('path');
 var through2 = require('through2');
+var args = require(path.join(__dirname, '..', 'args'));
 
-module.exports = function(options, handler, callback) {
-  var mysqlConfig = options.mQConfig;
+module.exports = function(handler, callback) {
+  var mysqlConfig = args.mysqlConfig;
   mysqlConfig.connectionLimit = 1;
 
   var epochStream = require(path.join(__dirname, '..', 'epoch_stream'));
