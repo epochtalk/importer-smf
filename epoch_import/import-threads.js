@@ -7,7 +7,6 @@ module.exports = function(options, newBoard, handler, callback) {
   var newBoardId = newBoard.id;
 
   var mysqlConfig = options.mQConfig;
-  // TODO: remove this?
   mysqlConfig.connectionLimit = 2;
 
   var epochStream = require(path.join(__dirname, '..', 'epoch_stream'));

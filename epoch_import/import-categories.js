@@ -3,7 +3,6 @@ var through2 = require('through2');
 
 module.exports = function(options, handler, callback) {
   var mysqlConfig = options.mQConfig;
-  // TODO: remove this?
   mysqlConfig.connectionLimit = 1;
 
   var epochStream = require(path.join(__dirname, '..', 'epoch_stream'));

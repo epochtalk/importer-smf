@@ -7,7 +7,6 @@ module.exports = function(options, newThread, handler, callback) {
   var newThreadId = newThread.id;
 
   var mysqlConfig = options.mQConfig;
-  // TODO: remove this?
   mysqlConfig.connectionLimit = 1;
 
   var epochStream = require(path.join(__dirname, '..', 'epoch_stream'));

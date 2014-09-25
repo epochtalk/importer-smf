@@ -4,7 +4,6 @@ var db = require(path.join(__dirname, '..', 'db'));
 
 module.exports = function(options, handler, callback) {
   var mysqlConfig = options.mQConfig;
-  // TODO: remove this?
   mysqlConfig.connectionLimit = 1;
 
   var epochStream = require(path.join(__dirname, '..', 'epoch_stream'));
