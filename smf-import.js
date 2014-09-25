@@ -25,11 +25,7 @@ module.exports = function smfImport(args, topCallback) {
   var categories = [];
   var categoryMap = {};
 
-  var options = {
-    mQConfig: require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'))
-  };
-
-  epochImport.categories(options, function(err, newCategory, categoryCb) {
+  epochImport.categories(function(err, newCategory, categoryCb) {
     // TODO Categories: Update this implementation
     categories.push({name: newCategory.name, board_ids: []});
     categoryMap[newCategory.smf.ID_CAT.toString()] = categories.length - 1;
