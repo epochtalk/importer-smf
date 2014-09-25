@@ -1,3 +1,6 @@
+var path = require('path');
+var db = require(path.join(__dirname, 'db'));
+
 module.exports = function smfImport(args, topCallback) {
   var debug = args.debug;
   var quiet = args.quiet;
@@ -9,7 +12,6 @@ module.exports = function smfImport(args, topCallback) {
     var logfile = fs.createWriteStream(log);
   }
 
-  var path = require('path');
   var epochImport = require(path.join(__dirname,'epoch_import'));
   var printStats = require('./print-stats');
   var count = {
@@ -20,7 +22,19 @@ module.exports = function smfImport(args, topCallback) {
     errs: 0
   };
 
+  var categories = [];
+  var categoryMap = {};
 
+  var options = {
+    mQConfig: require(path.join(process.env.HOME,'.epoch_admin', 'mysql-config'))
+  };
+
+  epochImport.categories(options, function(err, newCategory, categoryCb) {
+    // TODO Categories: Update this implementation
+    categories.push({name: newCategory.name, board_ids: []});
+    categoryMap[newCategory.smf.ID_CAT.toString()] = categories.length - 1;
+    categoryCb();
+  }, function () {
   epochImport.users(function(err, newUser, userCb) {
     if(err) {
       count.errs++;
@@ -53,6 +67,10 @@ module.exports = function smfImport(args, topCallback) {
       else {
         if (debug) {
           console.log('Board: ' + newBoard.smf.ID_BOARD);
+        }
+        // TODO Categories: Clean this up in updated implementation
+        if (newBoard.smf.ID_CAT !== 0) {
+          categories[categoryMap[newBoard.smf.ID_CAT.toString()]].board_ids.push(newBoard.id);
         }
         count.boards++;
         epochImport.threads(newBoard, function(err, newThread, threadCb) {
@@ -103,6 +121,8 @@ module.exports = function smfImport(args, topCallback) {
       if (!quiet) {
         process.stdout.write('\n');
       }
+      db.boards.updateCategories(categories).catch(console.log);
     });
+  });
   });
 };
