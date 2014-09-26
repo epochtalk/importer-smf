@@ -3,7 +3,7 @@ var pJSON = require(path.join(__dirname, 'package.json'));
 var program = require('commander');
 program
   .version(pJSON.version)
-  .option('--leveldb <path>', 'Path to leveldb (default: ./epoch.db')
+  .option('--leveldb <path>', 'Path to leveldb (default: ./epoch.db)')
   .option('-d, --debug', 'Debug mode')
   .option('-q, --quiet', 'Suppress output')
   .option('--log <file>', 'Log errors to file (default: $HOME/.epoch/admin/log.txt)')
