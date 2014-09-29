@@ -26,6 +26,13 @@ module.exports = function smfImport(args, topCallback) {
   var categoryMap = {};
 
   epochImport.categories(function(err, newCategory, categoryCb) {
+    if(err) {
+      count.errs++;
+      if (log) {
+        logfile.write('Category error: ' + newCategory.smf.ID_CAT + '\n');
+        logfile.write(err.toString()+'\n');
+      }
+    }
     // TODO Categories: Update this implementation
     categories.push({name: newCategory.name, board_ids: []});
     categoryMap[newCategory.smf.ID_CAT.toString()] = categories.length - 1;
