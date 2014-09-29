@@ -23,6 +23,10 @@ module.exports = function smfImport(args, topCallback) {
   };
 
   var categories = [];
+  var existingCats;
+  db.boards.allCategories().then(function(cats) {
+    existingCats = cats;
+  });
   var categoryMap = {};
 
   epochImport.categories(function(err, newCategory, categoryCb) {
@@ -124,7 +128,7 @@ module.exports = function smfImport(args, topCallback) {
       if (!quiet) {
         process.stdout.write('\n');
       }
-      db.boards.updateCategories(categories).catch(console.log);
+      db.boards.updateCategories(existingCats.concat(categories)).catch(console.log);
     });
   });
   });
