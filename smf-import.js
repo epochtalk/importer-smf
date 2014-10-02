@@ -13,14 +13,9 @@ module.exports = function smfImport(args, topCallback) {
   }
 
   var epochImport = require(path.join(__dirname,'epoch_import'));
-  var printStats = require('./print-stats');
-  var count = {
-    users: 0,
-    boards: 0,
-    threads: 0,
-    posts: 0,
-    errs: 0
-  };
+  var StatLogger = require('./stat-logger');
+  var statFields = ['users', 'boards', 'threads', 'posts', 'errors'];
+  var statLogger = new StatLogger({fields: statFields});
 
   var categories = [];
   var existingCats;
@@ -31,7 +26,7 @@ module.exports = function smfImport(args, topCallback) {
 
   epochImport.categories(function(err, newCategory, categoryCb) {
     if(err) {
-      count.errs++;
+      statLogger.increment('errors');
       if (log) {
         logfile.write('Category error: ' + newCategory.smf.ID_CAT + '\n');
         logfile.write(err.toString()+'\n');
@@ -44,7 +39,7 @@ module.exports = function smfImport(args, topCallback) {
   }, function () {
     epochImport.users(function(err, newUser, userCb) {
       if(err) {
-        count.errs++;
+        statLogger.increment('errors');
         if (log) {
           logfile.write('User error: ' + newUser.smf.ID_MEMBER + '\n');
           logfile.write(err.toString()+'\n');
@@ -54,17 +49,16 @@ module.exports = function smfImport(args, topCallback) {
         if (debug) {
           console.log('User: ' + newUser.smf.ID_MEMBER);
         }
-        count.users++;
-      }
-      if (!quiet) {
-        printStats(count);
+        if (!quiet) {
+          statLogger.increment('users');
+        }
       }
       return userCb();
     },
     function() {
       epochImport.boards(function(err, newBoard, boardCb) {
         if(err) {
-          count.errs++;
+          statLogger.increment('errors');
           if (log) {
             logfile.write('Board error: ' + newBoard.smf.ID_BOARD + '\n');
             logfile.write(err.toString()+'\n');
@@ -75,14 +69,16 @@ module.exports = function smfImport(args, topCallback) {
           if (debug) {
             console.log('Board: ' + newBoard.smf.ID_BOARD);
           }
+          if (!quiet) {
+            statLogger.increment('boards');
+          }
           // TODO Categories: Clean this up in updated implementation
           if (newBoard.smf.ID_CAT !== 0) {
             categories[categoryMap[newBoard.smf.ID_CAT.toString()]].board_ids.push(newBoard.id);
           }
-          count.boards++;
           epochImport.threads(newBoard, function(err, newThread, threadCb) {
             if(err) {
-              count.errs++;
+              statLogger.increment('errors');
               if (log) {
                 logfile.write('Thread error: ' + newThread.smf.ID_TOPIC + '\n');
                 logfile.write(err.toString()+'\n');
@@ -93,10 +89,12 @@ module.exports = function smfImport(args, topCallback) {
               if (debug) {
                 console.log('Thread: ' + newThread.smf.ID_TOPIC);
               }
-              count.threads++;
+              if (!quiet) {
+                statLogger.increment('threads');
+              }
               epochImport.posts(newThread, function(err, newPost, postCb) {
                 if(err) {
-                  count.errs++;
+                  statLogger.increment('errors');
                   if (log) {
                     logfile.write('Post error: ' + newPost.smf.ID_MSG + '\n');
                     logfile.write(err.toString()+'\n');
@@ -106,22 +104,15 @@ module.exports = function smfImport(args, topCallback) {
                   if (debug) {
                     console.log('Post: ' + newPost.smf.ID_MSG);
                   }
-                  count.posts++;
-                }
-                if (!quiet) {
-                  printStats(count);
+                  if (!quiet) {
+                    statLogger.increment('posts');
+                  }
                 }
                 return postCb();
               }, threadCb);
             }
-            if (!quiet) {
-              printStats(count);
-            }
           }, boardCb);
 
-        }
-        if (!quiet) {
-          printStats(count);
         }
       },
       function() {
