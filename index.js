@@ -11,3 +11,8 @@ imp(args, function (err) {
     console.log('Import complete.');
   }
 });
+
+process.on('SIGINT', function() {
+  process.stdout.write('\n');
+  process.exit();
+});
