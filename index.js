@@ -13,6 +13,6 @@ imp(args, function (err) {
 });
 
 process.on('SIGINT', function() {
-  process.stdout.write('\n');
+  process.stdout.moveCursor(0,5);
   process.exit();
 });
