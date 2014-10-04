@@ -1,21 +1,15 @@
-var mysql = require('mysql');
-
-var MysqlQuerier = module.exports = function(config, callback) {
-  this.pool = mysql.createPool(config);
-  this.pool.getConnection(function(err, connection) {
-    if (!err) {
-      connection.release();
-    }
-    else {
-      callback(err);
-    }
+var Querier = module.exports = function(pool, callback) {
+  var self = this;
+  pool.getConnection(function(err, connection) {
+    self.connection = connection;
+    callback(err);
   });
 };
 
-MysqlQuerier.prototype.getTables = function(callback) {
+Querier.prototype.getTables = function(callback) {
   var tables = [];
 
-  this.pool.query('SHOW tables', function(err, rows) {
+  this.connection.query('SHOW tables', function(err, rows) {
     if (!err) {
       rows.forEach(function(row) {
         tables.push(row[Object.keys(row)[0]]);
@@ -24,24 +18,24 @@ MysqlQuerier.prototype.getTables = function(callback) {
     return callback(err, tables);
   });
 };
-MysqlQuerier.prototype.getColumns = function(table, callback) {
-  this.pool.query('SHOW columns FROM ??', table, function(err, rows) {
+Querier.prototype.getColumns = function(table, callback) {
+  this.connection.query('SHOW columns FROM ??', table, function(err, rows) {
     return callback(err, rows);
   });
 };
-MysqlQuerier.prototype.getRowsWhere = function(table, obj, callback) {
-  this.pool.query('SELECT * FROM ?? WHERE ?', [table, obj], function(err, rows) {
+Querier.prototype.getRowsWhere = function(table, obj, callback) {
+  this.connection.query('SELECT * FROM ?? WHERE ?', [table, obj], function(err, rows) {
     return callback(err, rows);
   });
 };
-MysqlQuerier.prototype.getRowsWhereColumn = function(table, obj, columns, callback) {
-  this.pool.query('SELECT ?? FROM ?? WHERE ?', [columns, table, obj], function(err, rows) {
+Querier.prototype.getRowsWhereColumn = function(table, obj, columns, callback) {
+  this.connection.query('SELECT ?? FROM ?? WHERE ?', [columns, table, obj], function(err, rows) {
     return callback(err, rows);
   });
 };
-MysqlQuerier.prototype.createRowStream = function(table, options) {
+Querier.prototype.createRowStream = function(table, options) {
   if (!options) {
-    return this.pool.query('SELECT * FROM ??', table).stream();
+    return this.connection.query('SELECT * FROM ??', table).stream();
   }
   else {
     var escapeValues = [];
@@ -72,14 +66,14 @@ MysqlQuerier.prototype.createRowStream = function(table, options) {
       query += 'ORDER BY ?? ';
       escapeValues.push(options.orderBy);
     }
-    return this.pool.query(query, escapeValues).stream();
+    return this.connection.query(query, escapeValues).stream();
   }
 };
-MysqlQuerier.prototype.end = function(callback) {
+Querier.prototype.release = function(callback) {
   if (callback && typeof(callback) === "function") {
-    this.pool.end(callback());
+    this.connection.release(callback());
   }
   else {
-    this.pool.end();
+    this.connection.release();
   }
 };
