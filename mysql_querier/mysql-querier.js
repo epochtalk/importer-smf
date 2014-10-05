@@ -1,15 +1,23 @@
 var path = require('path');
 var mysql = require('mysql');
 var Querier = require(path.join(__dirname, 'querier'));
+var mysqlQuerier = {};
+var pool;
 
-var MysqlQuerier = module.exports = function(config) {
-  this.pool = mysql.createPool(config);
+module.exports = function(config) {
+  pool = mysql.createPool(config);
+  mysqlQuerier.getQuerier = function(callback) {
+    return new Querier(pool, callback);
+  };
+
+  mysqlQuerier.end = function(callback) {
+    if (callback && typeof(callback) === "function") {
+      pool.end(callback);
+    }
+    else {
+      pool.end();
+    }
+  };
+  return mysqlQuerier;
 };
 
-MysqlQuerier.prototype.getQuerier = function(callback) {
-  return new Querier(this.pool, callback);
-};
-
-MysqlQuerier.prototype.end = function(callback) {
-  this.pool.end(callback);
-};
