@@ -2,7 +2,7 @@ var path = require('path');
 var EpochCollection = require(path.join(__dirname, 'epoch-collection'));
 var through2 = require('through2');
 
-module.exports = function(mQ) {
+module.exports = function(querier) {
   var table = 'smf_members';
   var tableMapSafe = {
     memberName : 'username',
@@ -80,7 +80,7 @@ module.exports = function(mQ) {
   options.columns = columns;
   options.orderBy = 'ID_MEMBER';
 
-  var rowStream = mQ.createRowStream(table, options);
+  var rowStream = querier.createRowStream(table, options);
   var tr = through2.obj(function(row, enc, cb) {
     var epochCollection = new EpochCollection();
     epochCollection.map(row, tableMapSafe, {validate: true});
