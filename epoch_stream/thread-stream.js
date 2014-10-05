@@ -2,7 +2,7 @@ var path = require('path');
 var EpochCollection = require(path.join(__dirname, 'epoch-collection'));
 var through2 = require('through2');
 
-module.exports = function(mQ, oldBoardId, newBoardId) {
+module.exports = function(querier, oldBoardId, newBoardId) {
   var table = 'smf_topics';
   var tableMapSafe = {
     numViews : 'view_count',
@@ -37,10 +37,10 @@ module.exports = function(mQ, oldBoardId, newBoardId) {
   options.where = {ID_BOARD : oldBoardId};
   options.orderBy = 'ID_TOPIC';
 
-  var rowStream = mQ.createRowStream(table, options);
+  var rowStream = querier.createRowStream(table, options);
   var tr = through2.obj(function(row, enc, cb) {
     var epochCollection = new EpochCollection();
-    mQ.getRowsWhereColumn('smf_messages', { ID_MSG : row.ID_FIRST_MSG },
+    querier.getRowsWhereColumn('smf_messages', { ID_MSG : row.ID_FIRST_MSG },
      messageColumns, function(err, firstPostQuery) {
       if (err) {
         console.log(err);
