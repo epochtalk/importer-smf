@@ -2,7 +2,7 @@ var path = require('path');
 var EpochCollection = require(path.join(__dirname, 'epoch-collection'));
 var through2 = require('through2');
 
-module.exports = function(querier, oldBoardId, newBoardId) {
+module.exports = function(querier, msgQuerier, oldBoardId, newBoardId) {
   var table = 'smf_topics';
   var tableMapSafe = {
     numViews : 'view_count',
@@ -39,27 +39,23 @@ module.exports = function(querier, oldBoardId, newBoardId) {
 
   var rowStream = querier.createRowStream(table, options);
   var tr = through2.obj(function(row, enc, cb) {
+    var self = this;
     var epochCollection = new EpochCollection();
-    querier.getRowsWhereColumn('smf_messages', { ID_MSG : row.ID_FIRST_MSG },
-     messageColumns, function(err, firstPostQuery) {
-      if (err) {
-        console.log(err);
-      }
-      else if(firstPostQuery) {
-        if (firstPostQuery.length > 0) {
-          var firstPost = firstPostQuery[0];
-          epochCollection.mapTime(firstPost, timeMapSafe, {validate: true});
-        }
-        epochCollection.map(row, tableMapSafe, {validate: true});
-        epochCollection.subMap(row, smfMap, {key: 'smf'});
-        epochCollection.add('board_id', newBoardId);
-        tr.push(epochCollection.collection);
-      }
-      else {
-        console.log('First post for thread does not exist');
-      }
-      return cb();
-    });
+    var messageOptions = {
+      where: {ID_MSG: row.ID_FIRST_MSG},
+      columns: messageColumns
+    };
+    var messageStream = msgQuerier.createRowStream('smf_messages', messageOptions);
+    messageStream.pipe(through2.obj(function(firstPost, enc, messageCb) {
+      epochCollection.map(row, tableMapSafe, {validate: true});
+      epochCollection.subMap(row, smfMap, {key: 'smf'});
+      epochCollection.add('board_id', newBoardId);
+      epochCollection.mapTime(firstPost, timeMapSafe, {validate: true});
+      messageCb();
+    }, function() {
+      self.push(epochCollection.collection);
+      cb();
+    }));
   });
   var threadStream = rowStream.pipe(tr);
 
