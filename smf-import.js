@@ -115,11 +115,12 @@ module.exports = function smfImport(args, topCallback) {
 
         }
       },
-      function() {
+      function(err) {
         if (!quiet) {
           process.stdout.write('\n');
         }
         db.boards.updateCategories(existingCats.concat(categories)).catch(console.log);
+        topCallback(err);
       });
     });
   });
