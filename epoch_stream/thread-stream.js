@@ -53,7 +53,10 @@ module.exports = function(querier, msgQuerier, oldBoardId, newBoardId) {
       epochCollection.mapTime(firstPost, timeMapSafe, {validate: true});
       messageCb();
     }, function() {
-      self.push(epochCollection.collection);
+      // TODO:  figure out what to do on missing first post
+      if (epochCollection.collection) {
+        self.push(epochCollection.collection);
+      }
       cb();
     }));
   });
