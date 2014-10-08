@@ -1,16 +1,18 @@
 #!/usr/bin/env node
 var path = require('path');
+var chalk = require('chalk');
 var args = require(path.join(__dirname, 'args'));
 var imp = require(path.join(__dirname, 'smf-import'));
 var mQ = require(path.join(__dirname, 'mQ'));
 
 imp(args, function (err) {
   if (err) {
-    console.log(err);
+    process.stdout.write(chalk.red('\n'+err+'\n'));
   }
   else {
-    mQ.end();
-    console.log('Import complete.');
+    mQ.end(function() {
+      process.stdout.write(chalk.green('\nImport Complete.\n'));
+    });
   }
 });
 
