@@ -16,7 +16,7 @@
     "epochcore": "^0.5.6",
     "labeler": "git://github.com/unenglishable/labeler",
     "mysql": "^2.4.1",
-    "rainbow-word": "git://github.com/unenglishable/rainbow-word",
+    "rainbow-word": "^0.1.2",
     "through2": "^0.5.1"
   }
 }
