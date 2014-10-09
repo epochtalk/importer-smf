@@ -54,7 +54,7 @@ module.exports = function(querier, msgQuerier, oldBoardId, newBoardId) {
       messageCb();
     }, function() {
       // TODO:  figure out what to do on missing first post
-      if (epochCollection.collection) {
+      if (epochCollection.collection.smf) {
         self.push(epochCollection.collection);
       }
       cb();
