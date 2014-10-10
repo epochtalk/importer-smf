@@ -26,7 +26,13 @@ module.exports = function smfImport(args, topCallback) {
 
   epochImport.categories(function(err, newCategory, categoryCb) {
     if(err) {
-      statLogger.increment('errors');
+      if (!quiet) {
+        statLogger.increment('errors');
+      }
+      if (debug) {
+        console.log('Category Error: ' + newCategory.smf.ID_CAT);
+        console.log(err);
+      }
       if (log) {
         logfile.write('Category error: ' + newCategory.smf.ID_CAT + '\n');
         logfile.write(err.toString()+'\n');
