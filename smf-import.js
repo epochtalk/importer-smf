@@ -45,7 +45,13 @@ module.exports = function smfImport(args, topCallback) {
   }, function () {
     epochImport.users(function(err, newUser, userCb) {
       if(err) {
-        statLogger.increment('errors');
+        if (!quiet) {
+          statLogger.increment('errors');
+        }
+        if (debug) {
+          console.log('User Error: ' + newUser.smf.ID_MEMBER);
+          console.log(err);
+        }
         if (log) {
           logfile.write('User error: ' + newUser.smf.ID_MEMBER + '\n');
           logfile.write(err.toString()+'\n');
