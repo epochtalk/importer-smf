@@ -3,7 +3,7 @@ var path = require('path');
 var chalk = require('chalk');
 var args = require(path.join(__dirname, 'args'));
 var imp = require(path.join(__dirname, 'smf-import'));
-var mQ = require(path.join(__dirname, 'mQ'));
+var mQ = require(path.join(__dirname, 'mq'));
 
 imp(args, function (err) {
   if (err) {
