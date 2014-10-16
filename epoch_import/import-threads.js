@@ -14,22 +14,18 @@ module.exports = function(newBoard, handler, callback) {
       if (err) {
         return callback(err);
       }
-      var oldBoardId = newBoard.smf.ID_BOARD;
-      var newBoardId = newBoard.id;
+      var oldBoardId = newBoard.value.smf.ID_BOARD;
+      var newBoardId = newBoard.value.smf.ID_BOARD;
       var threadStream = epochStream.createThreadStream(querier, msgQuerier, oldBoardId, newBoardId);
       threadStream.pipe(through2.obj(function(threadObject, enc, trCb) {
-        db.threads.import(threadObject)
-        .then(function(newThread) {
+        db.store(threadObject, function(err, newThread) {
           if (handler) {
-            handler(null, newThread, trCb);
-          }
-          else {
-            trCb();
-          }
-        })
-        .catch(function(err){
-          if (handler) {
-            handler(err, threadObject, trCb);
+            if(err) {
+              handler(err, threadObject, trCb);
+            }
+            else {
+              handler(null, newThread, trCb);
+            }
           }
           else {
             trCb();
