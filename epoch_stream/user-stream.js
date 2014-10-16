@@ -83,6 +83,7 @@ module.exports = function(querier) {
   var rowStream = querier.createRowStream(table, options);
   var tr = through2.obj(function(row, enc, cb) {
     var epochCollection = new EpochCollection();
+    epochCollection.add('type', 'user');
     epochCollection.map(row, tableMapSafe, {validate: true});
     epochCollection.mapTime(row, timeMapSafe, {validate: true});
     epochCollection.subMap(row, smfMap, {key: 'smf'});
