@@ -47,6 +47,7 @@ module.exports = function(querier, msgQuerier, oldBoardId, newBoardId) {
     };
     var messageStream = msgQuerier.createRowStream('smf_messages', messageOptions);
     messageStream.pipe(through2.obj(function(firstPost, enc, messageCb) {
+      epochCollection.add('type', 'thread');
       epochCollection.map(row, tableMapSafe, {validate: true});
       epochCollection.subMap(row, smfMap, {key: 'smf'});
       epochCollection.add('board_id', newBoardId);
