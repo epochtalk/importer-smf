@@ -11,32 +11,28 @@ module.exports = function(handler, callback) {
       return callback(err);
     }
     // "deleted" user
-    db.users.import({
+    db.store({
       username: 'deleted',
       email: 'deleted',
       smf: {
         ID_MEMBER: -1
       }
-    })
-    .catch(function(err) {
-      console.log('"deleted" user error:');
-      console.log(err);
+    }, function(err, val) {
+      if (err) {
+        return callback(err);
+      }
     });
 
     var userStream = epochStream.createUserStream(querier);
     userStream.pipe(through2.obj(function(userObject, enc, trCb) {
-      db.users.import(userObject)
-      .then(function(newUser) {
+      db.store(userObject, function(err, newUser) {
         if (handler) {
-          handler(null, newUser, trCb);
-        }
-        else {
-          trCb();
-        }
-      })
-      .catch(function(err){
-        if (handler) {
-          handler(err, userObject, trCb);
+          if (err) {
+            handler(err, userObject, trCb);
+          }
+          else {
+            handler(err, newUser, trCb);
+          }
         }
         else {
           trCb();
