@@ -44,6 +44,7 @@ module.exports = function(querier, oldThreadId, newThreadId) {
       row.ID_MEMBER = -1;
     }
     var epochCollection = new EpochCollection();
+    epochCollection.add('type', 'post');
     epochCollection.map(row, tableMapSafe, {validate: true});
     epochCollection.mapTime(row, timeMapSafe, {validate: true});
     epochCollection.subMap(row, smfMap, {key: 'smf'});
