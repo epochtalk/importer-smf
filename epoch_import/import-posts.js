@@ -10,22 +10,18 @@ module.exports = function(newThread, handler, callback) {
     if (err) {
       return callback(err);
     }
-    var oldThreadId = newThread.smf.ID_TOPIC;
-    var newThreadId = newThread.id;
+    var oldThreadId = newThread.value.smf.ID_TOPIC;
+    var newThreadId = newThread.value.smf.ID_TOPIC;
     var postStream = epochStream.createPostStream(querier, oldThreadId, newThreadId);
     postStream.pipe(through2.obj(function(postObject, enc, trCb) {
-      db.posts.import(postObject)
-      .then(function(newPost) {
+      db.store(postObject, function(err, newPost) {
         if (handler) {
-          handler(null, newPost, trCb);
-        }
-        else {
-          trCb();
-        }
-      })
-      .catch(function(err){
-        if (handler) {
-          handler(err, postObject, trCb);
+          if (err) {
+            handler(err, postObject, trCb);
+          }
+          else {
+            handler(null, newPost, trCb);
+          }
         }
         else {
           trCb();
