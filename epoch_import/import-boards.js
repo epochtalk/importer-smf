@@ -5,11 +5,13 @@ var mQ = require(path.join(__dirname, '..', 'mq'));
 var db = require(path.join(__dirname, '..', 'db'));
 var epochStream = require(path.join(__dirname, '..', 'epoch_stream'));
 
-module.exports = function(handler, callback) {
+module.exports = function(callback) {
   var querier = mQ.getQuerier(function(err) {
     if (err) {
-      return callback(err);
+      return callback([err]);
     }
+    var boards = [];
+    var errors = [];
     var boardStream = epochStream.createBoardStream(querier);
     boardStream.pipe(through2.obj(function(boardObject, enc, trCb) {
       if (boardObject.smf.childLevel) {
@@ -21,26 +23,18 @@ module.exports = function(handler, callback) {
       delete boardObject.smf.ID_CAT;
       db.boards.import(boardObject)
       .then(function(newBoard) {
-        if (handler) {
-          newBoard.smf.childLevel = childLevel;
-          newBoard.smf.ID_CAT = ID_CAT;
-          handler(null, newBoard, trCb);
-        }
-        else {
-          trCb();
-        }
+        newBoard.smf.childLevel = childLevel;
+        newBoard.smf.ID_CAT = ID_CAT;
+        boards.push(newBoard);
+        trCb();
       })
       .catch(function(err){
-        if (handler) {
-          handler(err, boardObject, trCb);
-        }
-        else {
-          trCb();
-        }
+        errors.push({error: err, board: boardObject});
+        trCb();
       });
     }, function() {
       querier.release();
-      return callback();
+      return callback(errors, boards);
     }));
   });
 };

@@ -1,5 +1,6 @@
 var path = require('path');
 var db = require(path.join(__dirname, 'db'));
+var async = require('async');
 
 module.exports = function smfImport(args, topCallback) {
   var debug = args.debug;
@@ -56,7 +57,10 @@ module.exports = function smfImport(args, topCallback) {
       return userCb();
     },
     function() {
-      epochImport.boards(function(err, newBoard, boardCb) {
+      epochImport.boards(function(errors, boards) {
+        async.eachSeries(boards,
+        function(newBoard, boardCb) {
+          /*
         if(err) {
           statLogger.increment('errors');
           if (log) {
@@ -65,7 +69,8 @@ module.exports = function smfImport(args, topCallback) {
           }
           return boardCb();
         }
-        else {
+        */
+        if (newBoard) {
           if (debug) {
             console.log('Board: ' + newBoard.smf.ID_BOARD);
           }
@@ -122,6 +127,7 @@ module.exports = function smfImport(args, topCallback) {
         db.boards.updateCategories(existingCats.concat(categories)).catch(console.log);
         topCallback(err);
       });
+    });
     });
   });
 };
