@@ -2,7 +2,7 @@ var path = require('path');
 var EpochCollection = require(path.join(__dirname, 'epoch-collection'));
 var through2 = require('through2');
 
-module.exports = function(querier, oldThreadId, newThreadId) {
+module.exports = function(querier) {
   var table = 'smf_messages';
   var tableMapSafe = {
     subject : 'title',
@@ -35,7 +35,6 @@ module.exports = function(querier, oldThreadId, newThreadId) {
 
   var options = {};
   options.columns = columns;
-  options.where = {ID_TOPIC : oldThreadId};
   options.orderBy = 'ID_MSG';
 
   var rowStream = querier.createRowStream(table, options);
@@ -48,7 +47,6 @@ module.exports = function(querier, oldThreadId, newThreadId) {
     epochCollection.map(row, tableMapSafe, {validate: true});
     epochCollection.mapTime(row, timeMapSafe, {validate: true});
     epochCollection.subMap(row, smfMap, {key: 'smf'});
-    epochCollection.add('thread_id', newThreadId);
     this.push(epochCollection.collection);
     return cb();
   });
