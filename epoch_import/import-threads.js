@@ -4,38 +4,34 @@ var args = require(path.join(__dirname, '..', 'args'));
 var mQ = require(path.join(__dirname, '..', 'mq'));
 var db = require(path.join(__dirname, '..', 'db'));
 var epochStream = require(path.join(__dirname, '..', 'epoch_stream'));
+var logfile = require(path.join(__dirname, '..', 'log'));
+var statLogger = require(path.join(__dirname, '..', 'stats'));
 
-module.exports = function(newBoard, handler, callback) {
+module.exports = function(callback) {
   var querier = mQ.getQuerier(function(err) {
     if (err) {
+      statLogger.increment('errors');
+      logfile.write('Thread connection:');
+      logfile.write(err.toString());
       return callback(err);
     }
-    var msgQuerier = mQ.getQuerier(function(err) {
-      if (err) {
-        return callback(err);
-      }
-      var oldBoardId = newBoard.value.smf.ID_BOARD;
-      var newBoardId = newBoard.value.smf.ID_BOARD;
-      var threadStream = epochStream.createThreadStream(querier, msgQuerier, oldBoardId, newBoardId);
-      threadStream.pipe(through2.obj(function(threadObject, enc, trCb) {
-        db.store(threadObject, function(err, newThread) {
-          if (handler) {
-            if(err) {
-              handler(err, threadObject, trCb);
-            }
-            else {
-              handler(null, newThread, trCb);
-            }
-          }
-          else {
-            trCb();
-          }
-        });
-      }, function() {
-        msgQuerier.release();
-        querier.release();
-        return callback();
-      }));
-    });
+    var threadStream = epochStream.createThreadStream(querier);
+    threadStream.pipe(through2.obj(function(threadObject, enc, trCb) {
+      db.store(threadObject, function(err, newThread) {
+        if (err) {
+          statLogger.increment('errors');
+          logfile.write('Thread: ' + threadObject.smf.ID_TOPIC + '\n');
+          logfile.write(err.toString() + '\n');
+        }
+        else {
+          statLogger.increment('threads');
+        }
+        return trCb();
+      });
+    }, function() {
+      statLogger.tag('threads', '(finished)');
+      querier.release();
+      return callback(null, 'Thread import succeded');
+    }));
   });
 };
