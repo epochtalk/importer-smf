@@ -17,6 +17,7 @@ module.exports = function(callback) {
     }
     var postStream = epochStream.createPostStream(querier);
     postStream.pipe(through2.obj(function(postObject, enc, trCb) {
+      trCb();
       db.store(postObject, function(err, newPost) {
         if (err) {
           statLogger.increment('errors');
@@ -26,7 +27,6 @@ module.exports = function(callback) {
         else {
           statLogger.increment('posts');
         }
-        return trCb();
       });
     }, function() {
       statLogger.tag('posts', '(finished)');
