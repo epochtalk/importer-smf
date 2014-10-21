@@ -17,6 +17,7 @@ module.exports = function(callback) {
     }
     var threadStream = epochStream.createThreadStream(querier);
     threadStream.pipe(through2.obj(function(threadObject, enc, trCb) {
+      trCb();
       db.store(threadObject, function(err, newThread) {
         if (err) {
           statLogger.increment('errors');
@@ -26,7 +27,6 @@ module.exports = function(callback) {
         else {
           statLogger.increment('threads');
         }
-        return trCb();
       });
     }, function() {
       statLogger.tag('threads', '(finished)');
