@@ -4,6 +4,7 @@ var chalk = require('chalk');
 var args = require(path.join(__dirname, 'args'));
 var imp = require(path.join(__dirname, 'smf-import'));
 var mQ = require(path.join(__dirname, 'mq'));
+var statLogger = require(path.join(__dirname, 'stats'));
 
 imp(args, function (err) {
   if (err) {
@@ -12,11 +13,12 @@ imp(args, function (err) {
   else {
     mQ.end(function() {
       process.stdout.write(chalk.green('\nImport Complete.\n'));
+      statLogger.end();
     });
   }
 });
 
 process.on('SIGINT', function() {
-  process.stdout.moveCursor(0,5);
+  statLogger.end();
   process.exit();
 });
