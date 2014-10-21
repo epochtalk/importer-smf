@@ -30,6 +30,7 @@ module.exports = function(callback) {
 
     var userStream = epochStream.createUserStream(querier);
     userStream.pipe(through2.obj(function(userObject, enc, trCb) {
+      trCb();
       db.store(userObject, function(err, newUser) {
         if (err) {
           statLogger.increment('errors');
@@ -39,7 +40,6 @@ module.exports = function(callback) {
         else {
           statLogger.increment('users');
         }
-        return trCb();
       });
     }, function() {
       statLogger.tag('users', '(finished)');
