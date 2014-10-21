@@ -4,32 +4,34 @@ var args = require(path.join(__dirname, '..', 'args'));
 var mQ = require(path.join(__dirname, '..', 'mq'));
 var db = require(path.join(__dirname, '..', 'db'));
 var epochStream = require(path.join(__dirname, '..', 'epoch_stream'));
+var logfile = require(path.join(__dirname, '..', 'log'));
+var statLogger = require(path.join(__dirname, '..', 'stats'));
 
-module.exports = function(newThread, handler, callback) {
+module.exports = function(callback) {
   var querier = mQ.getQuerier(function(err) {
     if (err) {
+      statLogger.increment('errors');
+      logfile.write('Post connection:');
+      logfile.write(err.toString());
       return callback(err);
     }
-    var oldThreadId = newThread.value.smf.ID_TOPIC;
-    var newThreadId = newThread.value.smf.ID_TOPIC;
-    var postStream = epochStream.createPostStream(querier, oldThreadId, newThreadId);
+    var postStream = epochStream.createPostStream(querier);
     postStream.pipe(through2.obj(function(postObject, enc, trCb) {
       db.store(postObject, function(err, newPost) {
-        if (handler) {
-          if (err) {
-            handler(err, postObject, trCb);
-          }
-          else {
-            handler(null, newPost, trCb);
-          }
+        if (err) {
+          statLogger.increment('errors');
+          logfile.write('Post: ' + postObject.smf.ID_MSG + '\n');
+          logfile.write(err.toString() + '\n');
         }
         else {
-          trCb();
+          statLogger.increment('posts');
         }
+        return trCb();
       });
     }, function() {
+      statLogger.tag('posts', '(finished)');
       querier.release();
-      callback();
+      return callback(null, 'Post import succeded');
     }));
   });
 };
