@@ -4,10 +4,15 @@ var args = require(path.join(__dirname, '..', 'args'));
 var mQ = require(path.join(__dirname, '..', 'mq'));
 var db = require(path.join(__dirname, '..', 'db'));
 var epochStream = require(path.join(__dirname, '..', 'epoch_stream'));
+var logfile = require(path.join(__dirname, '..', 'log'));
+var statLogger = require(path.join(__dirname, '..', 'stats'));
 
-module.exports = function(handler, callback) {
+module.exports = function(callback) {
   var querier = mQ.getQuerier(function(err) {
     if (err) {
+      statLogger.increment('errors');
+      logfile.write('User connection:');
+      logfile.write(err.toString());
       return callback(err);
     }
     // "deleted" user
@@ -26,21 +31,20 @@ module.exports = function(handler, callback) {
     var userStream = epochStream.createUserStream(querier);
     userStream.pipe(through2.obj(function(userObject, enc, trCb) {
       db.store(userObject, function(err, newUser) {
-        if (handler) {
-          if (err) {
-            handler(err, userObject, trCb);
-          }
-          else {
-            handler(err, newUser, trCb);
-          }
+        if (err) {
+          statLogger.increment('errors');
+          logfile.write('User: ' + userObject.smf.ID_MEMBER + '\n');
+          logfile.write(err.toString() + '\n');
         }
         else {
-          trCb();
+          statLogger.increment('users');
         }
+        return trCb();
       });
     }, function() {
+      statLogger.tag('users', '(finished)');
       querier.release();
-      callback();
+      return callback(null, 'User import succeded');
     }));
   });
 };
