@@ -17,6 +17,7 @@ module.exports = function(callback) {
     }
     var categoryStream = epochStream.createCategoryStream(querier);
     categoryStream.pipe(through2.obj(function(categoryObject, enc, trCb) {
+      trCb();
       db.store(categoryObject, function(err, newCategory) {
         if (err) {
           statLogger.increment('errors');
@@ -26,7 +27,6 @@ module.exports = function(callback) {
         else {
           statLogger.increment('categories');
         }
-        return trCb();
       });
     }, function() {
       statLogger.tag('categories', '(finished)');
