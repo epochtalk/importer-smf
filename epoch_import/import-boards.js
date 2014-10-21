@@ -17,6 +17,7 @@ module.exports = function(callback) {
     }
     var boardStream = epochStream.createBoardStream(querier);
     boardStream.pipe(through2.obj(function(boardObject, enc, trCb) {
+      trCb();
       db.store(boardObject, function(err, newBoard) {
         if (err) {
           statLogger.increment('errors');
@@ -26,7 +27,6 @@ module.exports = function(callback) {
         else {
           statLogger.increment('boards');
         }
-        return trCb();
       });
     }, function() {
       statLogger.tag('boards', '(finished)');
