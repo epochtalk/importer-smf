@@ -6,14 +6,15 @@ var imp = require(path.join(__dirname, 'smf-import'));
 var mQ = require(path.join(__dirname, 'mq'));
 var statLogger = require(path.join(__dirname, 'stats'));
 
-imp(args, function (err) {
+imp(args, function (err, results) {
   if (err) {
     process.stdout.write(chalk.red('\n'+err+'\n'));
   }
   else {
     mQ.end(function() {
-      process.stdout.write(chalk.green('\nImport Complete.\n'));
       statLogger.end();
+      console.log(chalk.green(results.toString()));
+      console.log(chalk.green('Import Complete.'));
     });
   }
 });
