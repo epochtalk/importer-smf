@@ -12,6 +12,9 @@ SMF Boards -> Epoch Boards
 SMF Field | Epoch mapping
 ----------|--------------
 ID_BOARD | smf.ID_BOARD
+ID_CAT | smf.ID_CAT
+ID_PARENT | smf.ID_PARENT
+childLevel | smf.childLevel
 name | name
 description | description
 
@@ -19,9 +22,6 @@ description | description
 
 SMF Field | Epoch mapping
 ----------|--------------
-ID_CAT | (none)
-childLevel | (none)
-ID_PARENT | (none)
 boardOrder | (none)
 ID_LAST_MSG | (none)
 ID_MSG_UPDATED | (none)
@@ -46,25 +46,19 @@ SMF Field | Epoch mapping
 ----------|--------------
 ID_TOPIC | smf.ID_TOPIC
 ID_FIRST_MSG | smf.ID_FIRST_MSG
-
-<H4>Fields from First Message</H4>
-SMF Field | Epoch mapping
-----------|--------------
-posterTime | created_at
-modifiedTime | updated_at
+ID_BOARD | smf.ID_BOARD
+numViews | view_count
 
 <H3>Not Implemented</H3>
 
 SMF Field | Epoch mapping
 ----------|--------------
 isSticky | (none)
-ID_BOARD | (none)
 ID_LAST_MSG | (none)
 ID_MEMBER_STARTED | (none)
 ID_MEMBER_UPDATED | (none)
 ID_POLL | (none)
 numReplies | (none)
-numViews | (none)
 locked | (none)
 selfModerated | (none)
 
@@ -77,6 +71,8 @@ SMF Messages -> Epoch Posts
 SMF Field | Epoch mapping
 ----------|--------------
 ID_MSG | smf.ID_MSG
+ID_TOPIC | smf.ID_TOPIC
+ID_MEMBER | smf.ID_MEMBER
 posterTime | created_at
 modifiedTime | updated_at
 subject | title
@@ -86,9 +82,7 @@ body | body
 
 SMF Field | Epoch mapping
 ----------|--------------
-ID_TOPIC | (none)
 ID_BOARD | (none)
-ID_MEMBER | (none)
 ID_MSG_MODIFIED | (none)
 posterName | (none)
 posterEmail | (none)
@@ -107,6 +101,7 @@ SMF Members -> Epoch Users
 SMF Field | Epoch mapping
 ----------|--------------
 ID_MEMBER | smf.ID_MEMBER
+dateRegistered | created_at
 memberName | username
 emailAddress | email
 
@@ -114,7 +109,6 @@ emailAddress | email
 
 SMF Field | Epoch mapping
 ----------|--------------
-dateRegistered | (none)
 posts | (none)
 ID_GROUP | (none)
 lngfile | (none)
