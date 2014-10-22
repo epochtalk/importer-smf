@@ -13,6 +13,7 @@ module.exports = function(querier) {
     modifiedTime: 'updated_at'
   };
   var smfMap = [
+    'ID_TOPIC',
     'ID_MEMBER',
     'ID_MSG'
   ];
