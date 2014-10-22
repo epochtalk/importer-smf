@@ -9,6 +9,7 @@ module.exports = function(querier) {
   };
 
   var smfMap = [
+    'ID_BOARD',
     'ID_TOPIC',
     'ID_FIRST_MSG'
   ];
