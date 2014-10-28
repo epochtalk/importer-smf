@@ -56,8 +56,20 @@ Querier.prototype.createRowStream = function(table, options) {
 
     // Where key = value for each object entry
     if (options.where) {
-      query += 'WHERE ? ';
-      escapeValues.push(options.where);
+      if (options.where.operation) {
+        var op = options.where.operation;
+        if (op === '<' || op === '>' || op === '=' || op === '>=' || op === '<=' || op === '<>') {
+          query += 'WHERE ?? ';
+          escapeValues.push(options.where.field);
+          query += op;
+          query += ' ? ';
+          escapeValues.push(options.where.value);
+        }
+      }
+      else {
+        query += 'WHERE ? ';
+        escapeValues.push(options.where);
+      }
     }
 
     // Orders by columns in an array
