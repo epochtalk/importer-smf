@@ -6,9 +6,17 @@ module.exports = function(querier) {
   var table = 'smf_members';
   var tableMapSafe = {
     memberName : 'username',
-    emailAddress : 'email'
+    emailAddress : 'email',
+    realName: 'name',
+    //gender: 'gender',
+    birthdate: 'dob',
+    websiteUrl: 'website',
+    location: 'location',
+    signature: 'signature',
+    avatar: 'avatar'
   };
   var timeMapSafe = {
+    lastLogin: 'updated_at',
     dateRegistered : 'created_at'
   };
   var smfMap = [
