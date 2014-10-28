@@ -18,6 +18,11 @@ module.exports = function(querier) {
 
   var options = {};
   options.orderBy = 'ID_BOARD';
+  options.where = {
+    field: 'ID_BOARD',
+    operation: '<=',
+    value: 10
+  };
 
   var rowStream = querier.createRowStream(table, options);
   var tr = through2.obj(function(row, enc, cb) {
