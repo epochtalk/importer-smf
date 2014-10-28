@@ -109,17 +109,24 @@ SMF Field | Epoch mapping
 ID_MEMBER | smf.ID_MEMBER
 memberName | username
 emailAddress | email
+realName | name
+gender | gender
+birthdate | dob
+websiteUrl | website
+location | location
+signature | signature
+avatar | avatar
+lastLogin | updated_at
+dateRegistered | created_at
+personalText | status
 
 <H3>Not Implemented</H3>
 
 SMF Field | Epoch mapping
 ----------|--------------
-dateRegistered | (none)
 posts | (none)
 ID_GROUP | (none)
 lngfile | (none)
-lastLogin | (none)
-realName | (none)
 instantMessages | (none)
 unreadMessages | (none)
 buddy_list | (none)
@@ -127,12 +134,7 @@ pm_ignore_list | (none)
 ign_ignore_list | (none)
 messageLabels | (none)
 passwd | (none)
-personalText | (none)
-gender | (none)
-birthdate | (none)
 websiteTitle | (none)
-websiteUrl | (none)
-location | (none)
 ICQ | (none)
 AIM | (none)
 YIM | (none)
@@ -140,9 +142,7 @@ MSN | (none)
 hideEmail | (none)
 showOnline | (none)
 timeFormat | (none)
-signature | (none)
 timeOffset | (none)
-avatar | (none)
 pm_email_notify | (none)
 karmaBad | (none)
 karmaGood | (none)
