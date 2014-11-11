@@ -9,7 +9,6 @@ module.exports = function(querier) {
     emailAddress : 'email',
     realName: 'name',
     //gender: 'gender',
-    //birthdate: 'dob',
     websiteUrl: 'website',
     location: 'location',
     signature: 'signature',
@@ -18,6 +17,9 @@ module.exports = function(querier) {
   var timeMapSafe = {
     lastLogin: 'updated_at',
     dateRegistered : 'created_at'
+  };
+  var dateMapSafe = {
+    birthdate: 'dob'
   };
   var smfMap = [
     'ID_MEMBER'
@@ -93,6 +95,7 @@ module.exports = function(querier) {
     var epochCollection = new EpochCollection();
     epochCollection.map(row, tableMapSafe, {validate: true});
     epochCollection.mapTime(row, timeMapSafe, {validate: true});
+    epochCollection.mapDate(row, dateMapSafe, {validate: true});
     epochCollection.subMap(row, smfMap, {key: 'smf'});
     this.push(epochCollection.collection);
     return cb();
