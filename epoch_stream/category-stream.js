@@ -22,5 +22,6 @@ module.exports = function(querier) {
     this.push(epochCollection.collection);
     return cb();
   });
-  var categoryStream = rowStream.pipe(tr); return categoryStream;
+  var categoryStream = rowStream.pipe(tr);
+  return categoryStream;
 };
