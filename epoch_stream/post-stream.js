@@ -6,7 +6,7 @@ module.exports = function(querier, oldThreadId, newThreadId) {
   var table = 'smf_messages';
   var tableMapSafe = {
     subject : 'title',
-    body : 'body'
+    body : 'encodedBody'
   };
   var timeMapSafe = {
     posterTime: 'created_at',
