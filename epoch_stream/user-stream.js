@@ -9,7 +9,7 @@ module.exports = function(querier) {
     emailAddress : 'email',
     realName: 'name',
     //gender: 'gender',
-    birthdate: 'dob',
+    //birthdate: 'dob',
     websiteUrl: 'website',
     location: 'location',
     signature: 'signature',
