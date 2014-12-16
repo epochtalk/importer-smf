@@ -32,7 +32,7 @@ options](https://github.com/felixge/node-mysql#connection-options) for full set
 of options.
 An example configuration:
 
-`$HOME/.epoch/admin/mysql-config.js`
+`$HOME/.epoch/admin/mysql-config.json`
 ~~~~
 {
   "host": "127.0.0.1",
